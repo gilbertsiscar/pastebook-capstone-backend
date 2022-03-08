@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
         String formattedDate = dateObject.format(formatDateObj);
 
         newUser.setDatetimeCreated(formattedDate);
-
+//
         userRepository.save(newUser);
         return new ResponseEntity("User created successfully!", HttpStatus.CREATED);
     }
