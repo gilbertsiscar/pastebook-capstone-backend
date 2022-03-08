@@ -1,6 +1,7 @@
 package com.pointwest.pastebook.pastebook_backend.controllers;
 
 import com.pointwest.pastebook.pastebook_backend.exceptions.UserException;
+import com.pointwest.pastebook.pastebook_backend.models.JwtRequest;
 import com.pointwest.pastebook.pastebook_backend.models.User;
 import com.pointwest.pastebook.pastebook_backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -63,33 +65,56 @@ public class UserController {
 
     }
 
-    // get users
-    @RequestMapping(value="/users", method = RequestMethod.GET)
-    public ResponseEntity<Object> getUsers() {
-        return userService.getUsers();
-    }
-
-    // get user
-    @RequestMapping(value="/users/{userid}", method = RequestMethod.GET)
-    public ResponseEntity<Object> getUser(@PathVariable Long userid) {
-        return userService.getUser(userid);
-    }
 
     // update user details
     @RequestMapping(value="/users/details/{userid}", method = RequestMethod.PUT)
-    public ResponseEntity<Object> updateUserDetails(@RequestBody User user, @PathVariable Long userid) {
-        return userService.updateUser(user, userid);
+    public ResponseEntity<Object> updateUserPersonalDetails(@RequestBody Map<String, String> body
+            ,@PathVariable Long userid
+            ,@RequestHeader (value = "Authorization") String stringToken) {
+
+        User userDetails = new User();
+        userDetails.setFirstName(body.get("firstname"));
+        userDetails.setLastName(body.get("lastname"));
+        userDetails.setBirthday(body.get("birthday"));
+        userDetails.setGender(body.get("gender"));
+
+        return userService.updateUserPersonalDetails(userDetails, userid, stringToken);
     }
 
-    // update user details
-    @RequestMapping(value="/users/security/{userid}", method = RequestMethod.PUT)
-    public ResponseEntity<Object> updatePassword(@RequestBody User user, @PathVariable Long userid) {
-        return userService.updateUser(user, userid);
-    }
+
+
+//        // update user credentials
+//    @RequestMapping(value="/users/security/{userid}", method = RequestMethod.PUT)
+//    public ResponseEntity<Object> updatePassword(@RequestBody Map<String, String> body
+//            , @PathVariable Long userid
+//            , @RequestHeader (value = "Authorization") String stringToken) {
+//
+//
+//        User userCredentials = new User();
+//        userCredentials.setEmail(body.get("newpassword"));
+//        userCredentials.setPassword("newemail");
+//        userService.updateUserCredentials(userCredentials, userid, stringToken);
+//        return null;
+//    }
 
     // search user
     @RequestMapping(value="/api/users/search", method = RequestMethod.GET)
     public ResponseEntity<Object> searchUser(@RequestParam(value="name", defaultValue="") String searchTerm) {
         return userService.searchUser(searchTerm);
     }
+
+
+    // get users
+//    @RequestMapping(value="/users", method = RequestMethod.GET)
+//    public ResponseEntity<Object> getUsers() {
+//        return userService.getUsers();
+//    }
+//
+//    // get user
+//    @RequestMapping(value="/users/{userid}", method = RequestMethod.GET)
+//    public ResponseEntity<Object> getUser(@PathVariable Long userid) {
+//        return userService.getUser(userid);
+//    }
+
+
 }

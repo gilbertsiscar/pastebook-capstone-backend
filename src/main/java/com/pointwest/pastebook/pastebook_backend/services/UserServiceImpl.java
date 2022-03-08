@@ -1,5 +1,6 @@
 package com.pointwest.pastebook.pastebook_backend.services;
 
+import com.pointwest.pastebook.pastebook_backend.config.JwtToken;
 import com.pointwest.pastebook.pastebook_backend.models.User;
 import com.pointwest.pastebook.pastebook_backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,31 +20,33 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    JwtToken jwtToken;
+
     // create user
     public ResponseEntity createUser(User user) {
-        // adding datetime_created
-        User newUser = new User();
-
-        newUser.setFirstName(user.getFirstName());
-        newUser.setLastName(user.getLastName());
-        newUser.setEmail(user.getEmail());
-        newUser.setPassword(user.getPassword());
-        newUser.setBirthday(user.getBirthday());
-        newUser.setGender(user.getGender());
-        newUser.setMobileNumber(user.getMobileNumber());
-        newUser.setAboutMe(user.getAboutMe());
-        newUser.setProfilePic(user.getProfilePic());
-        newUser.setProfileUrl(user.getProfileUrl());
-
-        // getting 'Date' object and converting it to string
-        LocalDateTime dateObject = LocalDateTime.now();
-        DateTimeFormatter formatDateObj = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
-        String formattedDate = dateObject.format(formatDateObj);
-
-        newUser.setDatetimeCreated(formattedDate);
-
-        userRepository.save(newUser);
+        userRepository.save(user);
         return new ResponseEntity("User created successfully!", HttpStatus.CREATED);
+    }
+
+    @Override
+    public ResponseEntity updateUserCredentials(User user, Long id, String token) {
+        User userForUpdating = userRepository.findById(id).get();
+
+        if(userForUpdating != null) {
+            String authenticatedEmail = jwtToken.getUsernameFromToken(token);
+            if (authenticatedEmail.equalsIgnoreCase(userForUpdating.getEmail())) {
+                // Add email checker if unique
+                userForUpdating.setEmail(user.getEmail());
+                userForUpdating.setPassword(user.getPassword());
+                userRepository.save(userForUpdating);
+                return new ResponseEntity("User details updated successfully", HttpStatus.OK);
+            } else {
+                return new ResponseEntity("You are not authorized to edit this profile", HttpStatus.UNAUTHORIZED);
+            }
+        }else{
+            return new ResponseEntity("Profile not found", HttpStatus.NOT_FOUND);
+        }
     }
 
     // get users
@@ -57,20 +60,24 @@ public class UserServiceImpl implements UserService {
         return new ResponseEntity(user, HttpStatus.OK);
     }
 
-    // update user
-    public ResponseEntity updateUser(User user, Long id) {
-        User userToUpdate = userRepository.findById(id).get();
 
-        userToUpdate.setFirstName(user.getFirstName());
-        userToUpdate.setLastName(user.getLastName());
-        userToUpdate.setBirthday(user.getBirthday());
-        userToUpdate.setGender(user.getGender());
-        userToUpdate.setMobileNumber(user.getMobileNumber());
-        userToUpdate.setOnline(user.isOnline());
+    @Override
+    public ResponseEntity updateUserPersonalDetails(User user, Long id, String token) {
+        User userForUpdating = userRepository.findById(id).get();
 
-        userRepository.save(userToUpdate);
+        String authenticatedEmail = jwtToken.getUsernameFromToken(token);
+        if(authenticatedEmail.equalsIgnoreCase(userForUpdating.getEmail()))
+        {
+            userForUpdating.setFirstName(user.getFirstName());
+            userForUpdating.setLastName(user.getLastName());
+            userForUpdating.setGender(user.getGender());
+            userForUpdating.setBirthday(user.getBirthday());
+            userRepository.save(userForUpdating);
 
-        return new ResponseEntity("User updated successfully!", HttpStatus.OK);
+            return new ResponseEntity("User details updated successfully", HttpStatus.OK);
+        }else {
+            return new ResponseEntity("You are not authorized to edit this profile", HttpStatus.UNAUTHORIZED);
+        }
     }
 
     // search user

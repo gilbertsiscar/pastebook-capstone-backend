@@ -61,7 +61,7 @@ public class JwtToken implements Serializable {
         Map<String, Object> claims = new HashMap<>();
 
         User user = userRepository.findByEmail(userDetails.getUsername());
-        claims.put("student", user.getId());
+        claims.put("id", user.getId());
         return doGenerateToken(claims, userDetails.getUsername());
     }
 
@@ -83,6 +83,11 @@ public class JwtToken implements Serializable {
         String claim = getClaimFromToken(token, Claims::getSubject);
         return claim;
     }
+    public String getIdFromToken(String token) {
+        String claim = getClaimFromToken(token, Claims::getId);
+        return claim;
+    }
+    //Get
 
     // Get expiration date from JWT
     public Date getExpirationDateFromToken(String token) {

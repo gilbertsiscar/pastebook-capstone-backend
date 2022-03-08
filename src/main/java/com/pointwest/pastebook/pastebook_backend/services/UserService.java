@@ -10,14 +10,10 @@ public interface UserService {
     // create user
     ResponseEntity createUser(User user);
 
-    // get users
-    ResponseEntity getUsers();
-
-    // get user
-    ResponseEntity getUser(Long id);
-
     // update user
-    ResponseEntity updateUser(User user, Long id);
+    ResponseEntity updateUserCredentials(User user, Long id, String token);
+
+    ResponseEntity updateUserPersonalDetails(User user, Long id, String token);
 
     // search user
     ResponseEntity searchUser(String searchTerm);
