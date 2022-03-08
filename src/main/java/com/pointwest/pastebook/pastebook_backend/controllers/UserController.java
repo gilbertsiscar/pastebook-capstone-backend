@@ -82,7 +82,7 @@ public class UserController {
     }
 
 
-
+// Moved to AuthContoller
 //        // update user credentials
 //    @RequestMapping(value="/users/security/{userid}", method = RequestMethod.PUT)
 //    public ResponseEntity<Object> updatePassword(@RequestBody Map<String, String> body
@@ -98,12 +98,21 @@ public class UserController {
 //    }
 
     // search user
-    @RequestMapping(value="/api/users/search", method = RequestMethod.GET)
+    @RequestMapping(value="/users/search", method = RequestMethod.GET)
     public ResponseEntity<Object> searchUser(@RequestParam(value="name", defaultValue="") String searchTerm) {
         return userService.searchUser(searchTerm);
     }
 
+    @RequestMapping(value="/users/aboutme/{userId}", method = RequestMethod.PUT)
+    public ResponseEntity<Object> searchUser(@RequestBody Map<String, String> body
+            ,@PathVariable Long userId
+            ,@RequestHeader (value = "Authorization") String stringToken){
 
+
+        return userService.updateAboueMe(body.get("aboutme"), userId,stringToken);
+    }
+
+    //Not needed
     // get users
 //    @RequestMapping(value="/users", method = RequestMethod.GET)
 //    public ResponseEntity<Object> getUsers() {

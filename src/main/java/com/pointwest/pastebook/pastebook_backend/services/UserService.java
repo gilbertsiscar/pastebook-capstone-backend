@@ -15,6 +15,8 @@ public interface UserService {
 
     ResponseEntity updateUserPersonalDetails(User user, Long id, String token);
 
+    ResponseEntity updateAboueMe(String aboutMe, Long id, String token);
+
     // search user
     ResponseEntity searchUser(String searchTerm);
 

@@ -80,6 +80,23 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public ResponseEntity updateAboueMe(String aboutMe, Long id, String token) {
+        System.out.println("Id token is");
+        System.out.println(jwtToken.getIdFromToken(token));
+        Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
+
+        if(authenticatedId == id){
+            User user = userRepository.findById(authenticatedId).get();
+            //check if empty later
+            user.setAboutMe(aboutMe);
+            userRepository.save(user);
+            return new ResponseEntity("Aboue me Updated", HttpStatus.OK);
+        }else{
+            return new ResponseEntity("You are not authorized to edit this aboutMe", HttpStatus.UNAUTHORIZED);
+        }
+    }
+
     // search user
     public ResponseEntity searchUser(String searchTerm) {
         ArrayList<User> searchedUsers = new ArrayList<>();
