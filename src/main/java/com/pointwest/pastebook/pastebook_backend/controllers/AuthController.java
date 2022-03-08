@@ -7,6 +7,7 @@ import com.pointwest.pastebook.pastebook_backend.models.User;
 import com.pointwest.pastebook.pastebook_backend.services.JwtUserDetailService;
 import com.pointwest.pastebook.pastebook_backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -35,14 +37,20 @@ public class AuthController {
 
     @RequestMapping(value = {"/api/users/login"}, method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-
+        HashMap<String, String> response = new HashMap<>();
         authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getEmail());
 
         final String token = jwtToken.generateToken(userDetails);
 
-        return ResponseEntity.ok(new JwtResponse(token));
+        response.put("result", "successful");
+        response.put("id", jwtToken.getIdFromToken(token));
+        response.put("email", userDetails.getUsername());
+        response.put("token", token);
+
+        //return ResponseEntity.ok(new JwtResponse(token));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     // update user credentials
     @RequestMapping(value="/api/users/security/{userid}", method = RequestMethod.PUT)
