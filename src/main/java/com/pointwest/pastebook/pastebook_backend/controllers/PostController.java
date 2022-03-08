@@ -13,8 +13,16 @@ public class PostController {
     @Autowired
     private PostService postService;
 
+    // create post
     @RequestMapping(value="/posts/{posterId}/{postedId}", method = RequestMethod.POST)
     public ResponseEntity<Object> createPost(@RequestBody Post post, @PathVariable Long posterId, @PathVariable Long postedId) {
         return postService.createPost(post, posterId, postedId);
     }
+
+    // getting all posts of a particular user
+    @RequestMapping(value="/posts/{visitorId}/{ownerId}", method = RequestMethod.GET)
+    public ResponseEntity<Object> getPostsFromUser(@PathVariable Long visitorId, @PathVariable Long ownerId) {
+        return postService.getPostsFromUser(visitorId, ownerId);
+    }
+
 }

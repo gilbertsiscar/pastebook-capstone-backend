@@ -34,6 +34,33 @@ public class PostServiceImpl implements PostService {
 
         ArrayList<Friend> friendsAllowedToPost = new ArrayList<>();
 
+        // Code for when the user is creating his own post (and when he doesn't have any friends yet, e.g. no record in the friends table)
+        User user1 = new User();
+        User user2 = new User();
+
+        user1.setId(posterId);
+        user2.setId(postedId);
+
+        if (user1.getId() == user2.getId()) {
+
+            Post postToCreate = new Post();
+
+            postToCreate.setTitle(post.getTitle());
+            postToCreate.setContent(post.getContent());
+            postToCreate.setSenderUser(userRepository.findById(posterId).get());
+            postToCreate.setReceiverUser(userRepository.findById(postedId).get());
+
+            // getting 'Date' object and converting it to string
+            LocalDateTime dateObject = LocalDateTime.now();
+            DateTimeFormatter formatDateObj = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
+            String formattedDate = dateObject.format(formatDateObj);
+
+            postToCreate.setDatetimeCreated(formattedDate);
+
+            postRepository.save(postToCreate);
+            return new ResponseEntity("Post created successfully!", HttpStatus.CREATED);
+        }
+
         for (Friend friend : friendRepository.findAll()) {
             if (friend.getRequester().getId() == postedId || friend.getRecipient().getId() == postedId) {
                 // store into an array list
@@ -70,5 +97,43 @@ public class PostServiceImpl implements PostService {
         }
         // this code will run after matapos yung loop (meaning, if the code below is executed, then walang nakita sa loop na id that satisfies the condition for the users that are allowed to post to user with id: posterId
         return new ResponseEntity("You are not allowed to post!", HttpStatus.CONFLICT);
+    }
+
+    // getting all posts of a particular user
+    public ResponseEntity getPostsFromUser(Long visitorId, Long ownerId) {
+
+        ArrayList<Friend> friendsAllowedToSeePosts = new ArrayList<>();
+        ArrayList<Post> postsToDisplay = new ArrayList<>();
+        ArrayList<Post> newestPostsToDisplay = new ArrayList<>();
+
+        // Code for when the user is retrieving his own post (ADD THIS)
+
+        for (Friend friend : friendRepository.findAll()) {
+            // only friends and the owner of the account can see the posts
+            if (friend.getRequester().getId() == ownerId || friend.getRecipient().getId() == ownerId) {
+                // store into an array list
+                friendsAllowedToSeePosts.add(friend);
+            }
+        }
+
+        for (Friend friend : friendsAllowedToSeePosts) {
+            if (visitorId == friend.getRequester().getId() || visitorId == friend.getRecipient().getId()) {
+
+                // loop through postRepository.findAll() and store all posts in an array list with user id == ownerId
+                for (Post post : postRepository.findAll()) {
+                    if (post.getReceiverUser().getId() == ownerId) {
+                        postsToDisplay.add(post);
+                    }
+                }
+
+                // for displaying first the newest posts
+                for (int i = postsToDisplay.size() - 1; i > -1; i--) {
+                    newestPostsToDisplay.add(postsToDisplay.get(i));
+                }
+
+                return new ResponseEntity(newestPostsToDisplay, HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity("You are not allowed to see the post!", HttpStatus.CONFLICT);
     }
 }
