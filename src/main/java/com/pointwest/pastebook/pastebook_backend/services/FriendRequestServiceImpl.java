@@ -29,16 +29,28 @@ public class FriendRequestServiceImpl implements FriendRequestService {
 
     // send friend request
     public ResponseEntity sendFriendRequest(Long senderId, Long receiverId) {
+        // Case 1: NOT POSSIBLE FOR A USER TO SEND A FRIEND REQUEST TO HIMSELF
+        if (senderId == receiverId) {
+            return new ResponseEntity("You can't send a friend request to yourself!", HttpStatus.CONFLICT);
+        }
 
-        //FOR THE FRIEND REQUESTION, NOTE: ALREADY FRIENDS CAN'T SEND FRIEND REQUEST ANYMORE TO EACH OTHER! (USE CONDITIONAL STATEMENT)
+        // Case 2: ALREADY FRIENDS CAN'T SEND FRIEND REQUEST ANYMORE TO EACH OTHER! (USE CONDITIONAL STATEMENT)
 
         // loop through every record in the friends table and if the friend.getRequester.getId() == senderId &&
         // friend.getRecipient.getId() == receiverId => print "You're already friends!"
         for (Friend friend : friendRepository.findAll()) {
             if ((friend.getRequester().getId() == senderId && friend.getRecipient().getId() == receiverId) || friend.getRequester().getId() == receiverId && friend.getRecipient().getId() == senderId ) {
-                return new ResponseEntity("You're already friends!", HttpStatus.OK);
+                return new ResponseEntity("You're already friends!", HttpStatus.CONFLICT);
             }
         }
+
+        //FOR THE FRIEND REQUEST, NOTE: IF USER A HAS ALREADY SENT A REQUEST TO USER B, USER A CAN'T ADD USER B AGAIN, UNLESS THE RECORD IS REMOVED FROM THE friends_request table
+        for (FriendRequest friendRequest : friendRequestRepository.findAll()) {
+            if (friendRequest.getSender().getId() == senderId && friendRequest.getReceiver().getId() == receiverId) {
+                return new ResponseEntity("You already added this person!", HttpStatus.CONFLICT);
+            }
+        }
+
         // otherwise, if they're not yet friends, automatic na mag run yung code below (automatic rin mag stop yung function since we have the return statement inside the for-loop)
 
         // getting the sender and receiver using the path variable ids

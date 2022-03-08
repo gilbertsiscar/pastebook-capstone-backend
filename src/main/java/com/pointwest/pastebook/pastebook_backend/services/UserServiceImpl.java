@@ -31,6 +31,9 @@ public class UserServiceImpl implements UserService {
         newUser.setBirthday(user.getBirthday());
         newUser.setGender(user.getGender());
         newUser.setMobileNumber(user.getMobileNumber());
+        newUser.setAboutMe(user.getAboutMe());
+        newUser.setProfilePic(user.getProfilePic());
+        newUser.setProfileUrl(user.getProfileUrl());
 
         // getting 'Date' object and converting it to string
         LocalDateTime dateObject = LocalDateTime.now();

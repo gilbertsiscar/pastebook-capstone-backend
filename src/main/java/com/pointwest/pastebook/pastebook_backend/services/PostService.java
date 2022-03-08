@@ -7,4 +7,7 @@ public interface PostService {
 
     // creating a post
     ResponseEntity createPost(Post post, Long posterId, Long postedId);
+
+    // getting all posts of a particular user
+    ResponseEntity getPostsFromUser(Long visitorId, Long ownerId);
 }

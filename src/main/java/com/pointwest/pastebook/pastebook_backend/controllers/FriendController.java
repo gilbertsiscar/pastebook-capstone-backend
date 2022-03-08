@@ -24,4 +24,5 @@ public class FriendController {
         return friendService.deleteFriend(requesterId, recipientId);
     }
 
+
 }

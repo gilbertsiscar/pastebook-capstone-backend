@@ -26,11 +26,13 @@ public class Post {
 
     @OneToOne
     @JoinColumn(name = "sender_user_id", referencedColumnName = "id")
+    @JsonIgnore
     private User senderUser;
 
     // NOTE: this particular block of code is important
     @ManyToOne
     @JoinColumn(name = "receiver_user_id", referencedColumnName = "id")
+    @JsonIgnore
     private User receiverUser;
 
     @OneToMany(mappedBy = "post")
