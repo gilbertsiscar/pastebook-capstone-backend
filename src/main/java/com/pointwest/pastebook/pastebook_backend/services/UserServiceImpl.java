@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -104,5 +105,10 @@ public class UserServiceImpl implements UserService {
             }
             return new ResponseEntity(searchedUsersAlphabetical, HttpStatus.OK);
         }
+    }
+
+    @Override
+    public Optional<User> findByEmail(String username) {
+        return Optional.ofNullable(userRepository.findByEmail(username));
     }
 }

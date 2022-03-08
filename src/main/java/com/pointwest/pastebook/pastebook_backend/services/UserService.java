@@ -3,6 +3,8 @@ package com.pointwest.pastebook.pastebook_backend.services;
 import com.pointwest.pastebook.pastebook_backend.models.User;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Optional;
+
 public interface UserService {
 
     // create user
@@ -19,4 +21,6 @@ public interface UserService {
 
     // search user
     ResponseEntity searchUser(String searchTerm);
+
+    Optional<User> findByEmail(String email);
 }
