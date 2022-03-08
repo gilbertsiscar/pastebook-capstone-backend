@@ -32,7 +32,7 @@ public class JwtToken implements Serializable {
 
     // jwt tokens accept seconds for token validity
     // 5 hrs * 60 mins * 60 secs
-    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
+    public static final long JWT_TOKEN_VALIDITY = 3 * 24 * 60 * 60 ;
 
     // Logic for preparing/creating the JWT
     // claims -> information that we would like to present/show the user
@@ -61,7 +61,9 @@ public class JwtToken implements Serializable {
         Map<String, Object> claims = new HashMap<>();
 
         User user = userRepository.findByEmail(userDetails.getUsername());
-        claims.put("id", user.getId());
+        claims.put("Id", user.getId());
+        System.out.println("This is the claims");
+        System.out.println(claims);
         return doGenerateToken(claims, userDetails.getUsername());
     }
 
@@ -84,7 +86,12 @@ public class JwtToken implements Serializable {
         return claim;
     }
     public String getIdFromToken(String token) {
-        String claim = getClaimFromToken(token, Claims::getId);
+        //{sub=test1@gmail.com, id=1, exp=1646796769, iat=1646778769}
+        //String claim = getAllClaimsFromToken(token).toString();
+
+        Claims claims = getAllClaimsFromToken(token);
+
+        String claim = claims.get("Id").toString();
         return claim;
     }
     //Get
