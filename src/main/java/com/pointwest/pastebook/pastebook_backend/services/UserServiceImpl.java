@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).get();
         return new ResponseEntity(user, HttpStatus.OK);
     }
-
+//
     // update user
     public ResponseEntity updateUser(User user, Long id) {
         User userToUpdate = userRepository.findById(id).get();

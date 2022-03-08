@@ -40,7 +40,7 @@ public class PostServiceImpl implements PostService {
                 friendsAllowedToPost.add(friend);
             }
         }
-
+//
         // looping through the friendsAllowedToPost array where a condition inside the loop checks if the user is allowed to post to the user with id: postedId
         for (Friend friend : friendsAllowedToPost) {
            if (posterId == friend.getRequester().getId() || posterId == friend.getRecipient().getId()) {
