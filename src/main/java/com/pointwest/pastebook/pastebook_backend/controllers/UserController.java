@@ -109,7 +109,7 @@ public class UserController {
             ,@RequestHeader (value = "Authorization") String stringToken){
 
 
-        return userService.updateAboueMe(body.get("aboutme"), userId,stringToken);
+        return userService.updateAboutMe(body.get("aboutme"), userId,stringToken);
     }
 
     //Not needed
