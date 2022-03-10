@@ -26,6 +26,8 @@ public class UserServiceImpl implements UserService {
     // create user
     public ResponseEntity createUser(User user) {
         userRepository.save(user);
+        user.setProfileUrl(user.getFirstName()+user.getLastName()+user.getId());
+        userRepository.save(user);
         return new ResponseEntity("User created successfully!", HttpStatus.CREATED);
     }
 
@@ -55,9 +57,8 @@ public class UserServiceImpl implements UserService {
     }
 
     // get user
-    public ResponseEntity getUser(Long id) {
-        User user = userRepository.findById(id).get();
-        return new ResponseEntity(user, HttpStatus.OK);
+    public User getUser(Long id) {
+        return userRepository.findById(id).get();
     }
 
 
@@ -81,7 +82,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity updateAboueMe(String aboutMe, Long id, String token) {
+    public ResponseEntity updateAboutMe(String aboutMe, Long id, String token) {
         System.out.println("Id token is");
         System.out.println(jwtToken.getIdFromToken(token));
         Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
