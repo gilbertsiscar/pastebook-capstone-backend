@@ -3,10 +3,12 @@ package com.pointwest.pastebook.pastebook_backend.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.sql.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="posts")
+@Table(name="post")
 public class Post {
 
     // Properties
@@ -16,46 +18,62 @@ public class Post {
     private Long id;
 
     @Column
-    private String title;
-
-    @Column
     private String content;
 
     @Column
-    private String datetimeCreated;
+    private Date datetimeCreated;
 
-    @OneToOne
-    @JoinColumn(name = "sender_user_id", referencedColumnName = "id")
-    @JsonIgnore
-    private User senderUser;
-
-    // NOTE: this particular block of code is important
+    //@OneToOne
     @ManyToOne
-    @JoinColumn(name = "receiver_user_id", referencedColumnName = "id")
-    @JsonIgnore
-    private User receiverUser;
+    @JoinColumn(name="user_id", nullable = false)
+    //@JoinColumn(name = "postOwner", referencedColumnName = "id")
+
+    private User postOwner;
+
+//    // NOTE: this particular block of code is important
+//    @ManyToOne
+//    @JoinColumn(name = "receiver_user_id", referencedColumnName = "id")
+//    @JsonIgnore
+//    private User receiverUser;
 
     @OneToMany(mappedBy = "post")
     @JsonIgnore
     private Set<Comment> comments;
 
+
+    //Users tagged in a post
+//    @OneToMany(mappedBy="post")
+//    @JsonIgnore
+//    private Set<User> taggedUsers;
+
+    public void setPostOwner(User postOwner) {
+        this.postOwner = postOwner;
+    }
+
+    public Set<User> getTaggedUsers() {
+        return taggedUsers;
+    }
+
+    public void setTaggedUsers(Set<User> taggedUsers) {
+        this.taggedUsers = taggedUsers;
+    }
+
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "TaggedUsers",
+            joinColumns = { @JoinColumn(name = "post_id", referencedColumnName = "id" ) },
+            inverseJoinColumns = { @JoinColumn(name = "user_id" , referencedColumnName = "id") }
+    )
+    Set<User> taggedUsers = new HashSet<>();
+
     // Constructors
     public Post() {
     }
 
-    public Post(String title, String content, User senderUser, User receiverUser) {
-        this.title = title;
+    public Post(String content, User postOwner) {
         this.content = content;
-        this.senderUser = senderUser;
-        this.receiverUser = receiverUser;
-    }
-
-    public Post(String title, String content, String datetimeCreated, User senderUser, User receiverUser) {
-        this.title = title;
-        this.content = content;
-        this.datetimeCreated = datetimeCreated;
-        this.senderUser = senderUser;
-        this.receiverUser = receiverUser;
+        this.postOwner = postOwner;
+      //  this.receiverUser = receiverUser;
     }
 
     // Getters and Setters
@@ -67,13 +85,6 @@ public class Post {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public String getContent() {
         return content;
@@ -83,29 +94,29 @@ public class Post {
         this.content = content;
     }
 
-    public String getDatetimeCreated() {
+    public Date getDatetimeCreated() {
         return datetimeCreated;
     }
 
-    public void setDatetimeCreated(String datetimeCreated) {
+    public void setDatetimeCreated(Date datetimeCreated) {
         this.datetimeCreated = datetimeCreated;
     }
 
-    public User getSenderUser() {
-        return senderUser;
+    public User getPostOwner() {
+        return postOwner;
     }
 
-    public void setSenderUser(User senderUser) {
-        this.senderUser = senderUser;
+    public void setPostOwnerc(User postOwner) {
+        this.postOwner = postOwner;
     }
 
-    public User getReceiverUser() {
-        return receiverUser;
-    }
-
-    public void setReceiverUser(User receiverUser) {
-        this.receiverUser = receiverUser;
-    }
+//    public User getReceiverUser() {
+//        return receiverUser;
+//    }
+//
+//    public void setReceiverUser(User receiverUser) {
+//        this.receiverUser = receiverUser;
+//    }
 
     public Set<Comment> getComments() {
         return comments;
