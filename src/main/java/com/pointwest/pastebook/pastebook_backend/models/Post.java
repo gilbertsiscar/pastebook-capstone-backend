@@ -23,11 +23,10 @@ public class Post {
     @Column
     private Date datetimeCreated;
 
-    //@OneToOne
-    @ManyToOne
+    @OneToOne
+    //@ManyToOne
     @JoinColumn(name="user_id", nullable = false)
     //@JoinColumn(name = "postOwner", referencedColumnName = "id")
-
     private User postOwner;
 
 //    // NOTE: this particular block of code is important
@@ -36,18 +35,48 @@ public class Post {
 //    @JsonIgnore
 //    private User receiverUser;
 
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public Set<LikedPost> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Set<LikedPost> likes) {
+        this.likes = likes;
+    }
+
     @OneToMany(mappedBy = "post")
-    @JsonIgnore
     private Set<Comment> comments;
 
+    @OneToMany(mappedBy = "post")
+    private Set<LikedPost> likes;
 
     //Users tagged in a post
 //    @OneToMany(mappedBy="post")
 //    @JsonIgnore
 //    private Set<User> taggedUsers;
 
-    public void setPostOwner(User postOwner) {
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "TaggedUsers",
+            joinColumns = { @JoinColumn(name = "post_id", referencedColumnName = "id" ) },
+            inverseJoinColumns = { @JoinColumn(name = "user_id" , referencedColumnName = "id") }
+    )
+    Set<User> taggedUsers = new HashSet<>();
+
+    public Post() {
+    }
+
+    public Post(String content, User postOwner) {
+        this.content = content;
         this.postOwner = postOwner;
+        //  this.receiverUser = receiverUser;
     }
 
     public Set<User> getTaggedUsers() {
@@ -58,23 +87,12 @@ public class Post {
         this.taggedUsers = taggedUsers;
     }
 
-    @ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(
-            name = "TaggedUsers",
-            joinColumns = { @JoinColumn(name = "post_id", referencedColumnName = "id" ) },
-            inverseJoinColumns = { @JoinColumn(name = "user_id" , referencedColumnName = "id") }
-    )
-    Set<User> taggedUsers = new HashSet<>();
+    public void setPostOwner(User postOwner) {
+        this.postOwner = postOwner;
+    }
 
     // Constructors
-    public Post() {
-    }
 
-    public Post(String content, User postOwner) {
-        this.content = content;
-        this.postOwner = postOwner;
-      //  this.receiverUser = receiverUser;
-    }
 
     // Getters and Setters
     public Long getId() {
@@ -102,14 +120,6 @@ public class Post {
         this.datetimeCreated = datetimeCreated;
     }
 
-    public User getPostOwner() {
-        return postOwner;
-    }
-
-    public void setPostOwnerc(User postOwner) {
-        this.postOwner = postOwner;
-    }
-
 //    public User getReceiverUser() {
 //        return receiverUser;
 //    }
@@ -118,11 +128,11 @@ public class Post {
 //        this.receiverUser = receiverUser;
 //    }
 
-    public Set<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(Set<Comment> comments) {
-        this.comments = comments;
-    }
+//    public Set<Comment> getComments() {
+//        return comments;
+//    }
+//
+//    public void setComments(Set<Comment> comments) {
+//        this.comments = comments;
+//    }
 }

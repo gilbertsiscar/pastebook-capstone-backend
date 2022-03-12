@@ -15,6 +15,7 @@ public interface PostService {
     Iterable<Post> getAllPostRelatedToUser(Long userId, String stringToken);
 
 
+
     // getting all posts of a particular user
     //ResponseEntity getPostsFromUser(Long visitorId, Long ownerId);
 

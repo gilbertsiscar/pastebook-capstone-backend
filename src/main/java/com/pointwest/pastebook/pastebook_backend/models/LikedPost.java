@@ -1,5 +1,7 @@
 package com.pointwest.pastebook.pastebook_backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -21,6 +23,7 @@ public class LikedPost {
     private User user;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 

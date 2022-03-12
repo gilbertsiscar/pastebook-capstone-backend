@@ -65,6 +65,13 @@ public class UserController {
 
     }
 
+    @RequestMapping(value="/users/details/{userid}", method = RequestMethod.GET)
+    public ResponseEntity<Object> getAccountDetails(
+            @PathVariable Long userid
+            ,@RequestHeader (value = "Authorization") String stringToken)
+    {
+        return new ResponseEntity<>(userService.getUser(userid,stringToken), HttpStatus.OK);
+    }
 
     // update user details
     @RequestMapping(value="/users/details/{userid}", method = RequestMethod.PUT)

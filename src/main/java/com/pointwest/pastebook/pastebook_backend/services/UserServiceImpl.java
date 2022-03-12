@@ -57,8 +57,13 @@ public class UserServiceImpl implements UserService {
     }
 
     // get user
-    public User getUser(Long id) {
+    public User getUser(Long id, String token) {
+        // check if you own this account
         return userRepository.findById(id).get();
+        // check if its your friend
+
+        // deny
+
     }
 
 

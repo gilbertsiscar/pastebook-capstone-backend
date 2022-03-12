@@ -19,7 +19,7 @@ public interface UserService {
 
 
     // For getting
-    User getUser(Long id);
+    User getUser(Long id, String token);
 
     // search user
     ResponseEntity searchUser(String searchTerm);

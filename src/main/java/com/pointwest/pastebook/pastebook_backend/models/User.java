@@ -26,6 +26,7 @@ public class User {
     private String email;
 
     @Column
+    //JsonIgnore
     private String password;
 
     @Column
@@ -85,8 +86,6 @@ public class User {
     @JsonIgnore
     private Set<Post> taggedpost = new HashSet<>();
 
-
-
     // OneToMany relationship between User Model and Album Model
     @OneToMany(mappedBy = "user")
     @JsonIgnore
@@ -96,8 +95,6 @@ public class User {
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private Set<Comment> comments;
-
-
 
     // Constructors
     public User() {
@@ -136,6 +133,7 @@ public class User {
         this.email = email;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
