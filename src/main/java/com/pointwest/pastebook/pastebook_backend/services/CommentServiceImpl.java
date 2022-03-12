@@ -45,7 +45,7 @@ public class CommentServiceImpl implements CommentService{
 
             post.getComments().add(comment);
             postRepository.save(post);
-            
+
             commentRepository.save(comment);
             return new ResponseEntity("Commented on post", HttpStatus.OK);
         }else{
@@ -54,7 +54,42 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public ResponseEntity unlikePost(Long postId, String token) {
-        return null;
+    public ResponseEntity removeComment(Long commentId, String token) {
+
+        Optional<Comment> commentTOEdit = commentRepository.findById(commentId);
+        if(commentTOEdit.isPresent()) {
+            Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
+            User user = userRepository.findById(authenticatedId).get();
+
+            //Comment commentToRemove = commentRepository.getCommentObject(postToRemoveCommentFrom.get().getId(), user.getId());
+            Optional<Post> postToUpdateComment = postRepository.findById(commentTOEdit.get().getPost().getId());
+            postToUpdateComment.get().getComments().remove(commentTOEdit.get());
+            postRepository.save(postToUpdateComment.get());
+            commentRepository.delete(commentTOEdit.get());
+            return new ResponseEntity("Remove comment on post", HttpStatus.OK);
+        }else{
+            return new ResponseEntity("Comment not found!", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Override
+    public ResponseEntity editComment(Long commentId, String content, String token) {
+
+        Optional<Comment> commentTOEdit = commentRepository.findById(commentId);
+        if(commentTOEdit.isPresent()) {
+            Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
+            User user = userRepository.findById(authenticatedId).get();
+
+            //Comment commentToRemove = commentRepository.getCommentObject(postToRemoveCommentFrom.get().getId(), user.getId());
+            Optional<Post> postToUpdateComment = postRepository.findById(commentTOEdit.get().getPost().getId());
+            postToUpdateComment.get().getComments().remove(commentTOEdit.get());
+            commentTOEdit.get().setContent(content);
+            postToUpdateComment.get().getComments().add(commentTOEdit.get());
+            postRepository.save(postToUpdateComment.get());
+            commentRepository.save(commentTOEdit.get());
+            return new ResponseEntity("Edit comment on post", HttpStatus.OK);
+        }else{
+            return new ResponseEntity("Comment not found!", HttpStatus.NOT_FOUND);
+        }
     }
 }

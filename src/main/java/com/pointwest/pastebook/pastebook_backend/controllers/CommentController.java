@@ -15,8 +15,8 @@ public class CommentController {
     @Autowired
     CommentService commentService;
 
-    @RequestMapping(value="/comment/{postId}", method = RequestMethod.GET)
-    public ResponseEntity<Object> likePost(
+    @RequestMapping(value="/comment/{postId}", method = RequestMethod.POST)
+    public ResponseEntity<Object> addCommentToPost(
             @PathVariable Long postId,
             @RequestBody Map<String, String> body,
             @RequestHeader (value = "Authorization") String stringToken)
@@ -24,4 +24,25 @@ public class CommentController {
 
         return commentService.commentPost(postId,body.get("comment"), stringToken);
     }
+
+    @RequestMapping(value="/comment/{commentId}", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> removeCommentTOPost(
+            @PathVariable Long commentId,
+            @RequestHeader (value = "Authorization") String stringToken)
+    {
+        return commentService.removeComment(commentId, stringToken);
+    }
+
+    @RequestMapping(value="/comment/{commentId}", method = RequestMethod.PUT)
+    public ResponseEntity<Object> editCommentFromPost(
+            @PathVariable Long commentId,
+            @RequestBody Map<String, String> body,
+            @RequestHeader (value = "Authorization") String stringToken)
+    {
+
+        return commentService.editComment(commentId,body.get("comment"), stringToken);
+    }
+
+
+
 }

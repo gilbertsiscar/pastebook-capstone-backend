@@ -20,4 +20,12 @@ public class LikedPostController {
     {
         return likedPostService.likePost(postId, stringToken);
     }
+
+    @RequestMapping(value="/like/{postId}", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> unLikePost(
+            @PathVariable Long postId,
+            @RequestHeader (value = "Authorization") String stringToken)
+    {
+        return likedPostService.unlikePost(postId, stringToken);
+    }
 }

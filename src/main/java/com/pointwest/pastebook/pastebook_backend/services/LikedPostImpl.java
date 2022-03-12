@@ -49,7 +49,20 @@ public class LikedPostImpl implements LikedPostService {
 
     @Override
     public ResponseEntity unlikePost(Long postId, String token) {
-        return null;
+        Optional<Post> postToUnLike = postRepository.findById(postId);
+        if(postToUnLike.isPresent()){
+            Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
+            User user = userRepository.findById(authenticatedId).get();
+
+            LikedPost unlike = likedPostRepository.getLikePostToUnlike(postToUnLike.get().getId(), user.getId());
+
+            postToUnLike.get().getLikes().remove(unlike);
+            postRepository.save(postToUnLike.get());
+            likedPostRepository.delete(unlike);
+            return new ResponseEntity("Unliked post", HttpStatus.OK);
+        }else{
+            return new ResponseEntity("Post not found!", HttpStatus.NOT_FOUND);
+        }
     }
 
     @Override
