@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.ArrayList;
 
 public interface LikedPostService {
-    ResponseEntity likePost(Long postId, String token);
+    boolean likePost(Long postId, String token);
     ResponseEntity unlikePost(Long postId, String token);
 
     Iterable<Post> getLikesFromAPost(Long postId, String stringToken);

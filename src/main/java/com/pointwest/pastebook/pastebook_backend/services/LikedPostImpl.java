@@ -17,18 +17,19 @@ import java.util.Optional;
 @Service
 public class LikedPostImpl implements LikedPostService {
     @Autowired
-    PostRepository postRepository;
+    private PostRepository postRepository;
 
     @Autowired
-    LikedPostRepository likedPostRepository;
+    private LikedPostRepository likedPostRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    JwtToken jwtToken;
+    private JwtToken jwtToken;
+
     @Override
-    public ResponseEntity likePost(Long postId, String token) {
+    public boolean likePost(Long postId, String token) {
         Optional<Post> postToLike = postRepository.findById(postId);
         if(postToLike.isPresent()){
             LikedPost commenceLike = new LikedPost();
@@ -36,14 +37,13 @@ public class LikedPostImpl implements LikedPostService {
             Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
             User user = userRepository.findById(authenticatedId).get();
             commenceLike.setUser(user);
-            //commenceLike.setDatetimeCreated();
 
             postToLike.get().getLikes().add(commenceLike);
             postRepository.save(postToLike.get());
             likedPostRepository.save(commenceLike);
-            return new ResponseEntity("Liked post", HttpStatus.OK);
+            return true;
         }else{
-            return new ResponseEntity("Post not found!", HttpStatus.NOT_FOUND);
+            return false;
         }
     }
 
