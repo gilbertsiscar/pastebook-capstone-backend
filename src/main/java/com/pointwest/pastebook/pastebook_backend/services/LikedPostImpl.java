@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,13 +32,13 @@ public class LikedPostImpl implements LikedPostService {
     @Override
     public boolean likePost(Long postId, String token) {
         Optional<Post> postToLike = postRepository.findById(postId);
+        Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
+        User user = userRepository.findById(authenticatedId).get();
+
         if(postToLike.isPresent()){
             LikedPost commenceLike = new LikedPost();
             commenceLike.setPost(postToLike.get());
-            Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
-            User user = userRepository.findById(authenticatedId).get();
             commenceLike.setUser(user);
-
             postToLike.get().getLikes().add(commenceLike);
             postRepository.save(postToLike.get());
             likedPostRepository.save(commenceLike);
@@ -66,7 +67,9 @@ public class LikedPostImpl implements LikedPostService {
     }
 
     @Override
-    public Iterable<Post> getLikesFromAPost(Long postId, String stringToken) {
-        return null;
+    public Integer getLikes(Long postId) {
+        Post post = postRepository.findById(postId).get();
+        return post.getLikes().size();
     }
+
 }
