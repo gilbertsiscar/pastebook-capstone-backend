@@ -3,14 +3,12 @@ package com.pointwest.pastebook.pastebook_backend.services;
 import com.pointwest.pastebook.pastebook_backend.models.User;
 import org.springframework.http.ResponseEntity;
 
-import javax.mail.MessagingException;
-import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
 public interface UserService {
 
     // create user
-    ResponseEntity createUser(User user, String siteURL) throws UnsupportedEncodingException, MessagingException;
+    ResponseEntity createUser(User user);
 
     // update user
     ResponseEntity updateUserCredentials(User user, Long id, String token);
