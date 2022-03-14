@@ -3,10 +3,11 @@ package com.pointwest.pastebook.pastebook_backend.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="users")
+@Table(name="user")
 public class User {
 
     // Properties
@@ -25,6 +26,7 @@ public class User {
     private String email;
 
     @Column
+    //JsonIgnore
     private String password;
 
     @Column
@@ -48,14 +50,41 @@ public class User {
     @Column
     private String aboutMe;
 
+    public Set<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
+    }
+
+    public Set<Post> getTaggedpost() {
+        return taggedpost;
+    }
+
+    public void setTaggedpost(Set<Post> taggedpost) {
+        this.taggedpost = taggedpost;
+    }
+
     @Column
     private String profileUrl;
 
     // NOTE: this particular block of code is important
     // OneToMany relationship between User Model and Post Model
-    @OneToMany(mappedBy = "receiverUser")
+    @OneToMany(mappedBy = "postOwner")
     @JsonIgnore
     private Set<Post> posts;
+
+
+    //Tagged posts
+//    @ManyToOne
+//    @JsonIgnore
+//    @JoinColumn(name="post_id", nullable=false)
+//    private Post post;
+
+    @ManyToMany(mappedBy = "taggedUsers")
+    @JsonIgnore
+    private Set<Post> taggedpost = new HashSet<>();
 
     // OneToMany relationship between User Model and Album Model
     @OneToMany(mappedBy = "user")
@@ -104,6 +133,7 @@ public class User {
         this.email = email;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
@@ -184,13 +214,13 @@ public class User {
         this.profileUrl = profileUrl;
     }
 
-    public Set<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(Set<Post> posts) {
-        this.posts = posts;
-    }
+//    public Set<Post> getPosts() {
+//        return posts;
+//    }
+//
+//    public void setPosts(Set<Post> posts) {
+//        this.posts = posts;
+//    }
 
     public Set<Comment> getComments() {
         return comments;

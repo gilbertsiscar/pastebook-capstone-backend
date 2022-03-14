@@ -7,9 +7,8 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Object> {
-    @Query(value = "SELECT * FROM user WHERE profile_url = ?1",
+public interface LikedPostRepository extends CrudRepository<LikedPost, Object> {
+    @Query(value = "SELECT * FROM liked_posts WHERE post_id= ?1 AND user_id = ?2",
             nativeQuery = true)
-    User getUserProfileByUrl(String profileUrl);
-    User findByEmail(String email);
+    LikedPost getLikePostToUnlike(Long post_id, Long user_id);
 }

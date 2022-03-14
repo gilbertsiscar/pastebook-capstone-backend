@@ -1,5 +1,7 @@
 package com.pointwest.pastebook.pastebook_backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
@@ -25,6 +27,7 @@ public class Comment {
 
     // ManyToOne relationship between Comment Model and Post Model
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name="post_id", nullable = false)
     private Post post;
 
