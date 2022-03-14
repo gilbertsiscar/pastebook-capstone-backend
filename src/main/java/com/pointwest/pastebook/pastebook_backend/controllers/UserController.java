@@ -49,8 +49,10 @@ public class UserController {
             user.setEmail(body.get("email"));
             user.setMobileNumber(body.get("mobilenumber"));
             user.setPassword(encodedPassword);
+            user.setGender(body.get("gender"));
             // default values
             user.setOnline(false);
+            user.setEnabled(false);
 
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
             LocalDateTime now = LocalDateTime.now();

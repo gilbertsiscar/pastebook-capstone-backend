@@ -27,10 +27,19 @@ public class UserServiceImpl implements UserService {
 
     // create user
     public ResponseEntity createUser(User user) {
+
+        userRepository.save(user);
+        //Need to save to set an id
+
+        //When verified, change status to verify and set profileUrl
+        prodVerify(user);
+        return new ResponseEntity("User created successfully!", HttpStatus.CREATED);
+    }
+
+    private void prodVerify(User user){
+        user.setEnabled(true);
         user.setProfileUrl(user.getFirstName()+user.getLastName()+user.getId());
         userRepository.save(user);
-
-        return new ResponseEntity("User created successfully!", HttpStatus.CREATED);
     }
 
     @Override
