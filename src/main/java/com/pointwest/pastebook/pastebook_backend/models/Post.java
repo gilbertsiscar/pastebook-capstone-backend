@@ -1,10 +1,15 @@
 package com.pointwest.pastebook.pastebook_backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "post")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Post {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,20 +20,28 @@ public class Post {
   @Column(name = "created_at")
   private String datetimeCreated;
 
-  @OneToOne
-  @JoinColumn(name = "user_id", nullable = false)
+  @ManyToOne
+  @JoinColumn(name = "user_id")
   private User user;
 
   @OneToMany(mappedBy = "post")
   private Set<Comment> comments;
 
-  @OneToMany(mappedBy = "post")
-  private Set<LikedPost> likes;
+  @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)
+  private List<LikedPost> likes;
 
   public Post() {}
 
   public Post(String content) {
     this.content = content;
+  }
+
+  public List<LikedPost> getLikes() {
+    return likes;
+  }
+
+  public void setLikes(List<LikedPost> likes) {
+    this.likes = likes;
   }
 
   public String getDatetimeCreated() {
@@ -53,14 +66,6 @@ public class Post {
 
   public void setComments(Set<Comment> comments) {
     this.comments = comments;
-  }
-
-  public Set<LikedPost> getLikes() {
-    return likes;
-  }
-
-  public void setLikes(Set<LikedPost> likes) {
-    this.likes = likes;
   }
 
   public Long getId() {
