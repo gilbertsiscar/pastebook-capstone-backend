@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="user")
+@Table(name="users")
 public class User {
 
     // Properties
@@ -58,20 +58,20 @@ public class User {
         this.posts = posts;
     }
 
-    public Set<Post> getTaggedpost() {
-        return taggedpost;
-    }
-
-    public void setTaggedpost(Set<Post> taggedpost) {
-        this.taggedpost = taggedpost;
-    }
+//    public Set<Post> getTaggedpost() {
+//        return taggedpost;
+//    }
+//
+//    public void setTaggedpost(Set<Post> taggedpost) {
+//        this.taggedpost = taggedpost;
+//    }
 
     @Column
     private String profileUrl;
 
     // NOTE: this particular block of code is important
     // OneToMany relationship between User Model and Post Model
-    @OneToMany(mappedBy = "postOwner")
+    @OneToMany(mappedBy = "user")
     @JsonIgnore
     private Set<Post> posts;
 
@@ -82,9 +82,9 @@ public class User {
 //    @JoinColumn(name="post_id", nullable=false)
 //    private Post post;
 
-    @ManyToMany(mappedBy = "taggedUsers")
-    @JsonIgnore
-    private Set<Post> taggedpost = new HashSet<>();
+//    @ManyToMany(mappedBy = "taggedUsers")
+//    @JsonIgnore
+//    private Set<Post> taggedpost = new HashSet<>();
 
     // OneToMany relationship between User Model and Album Model
     @OneToMany(mappedBy = "user")
