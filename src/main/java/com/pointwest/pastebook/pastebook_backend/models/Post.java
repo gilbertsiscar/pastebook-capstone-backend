@@ -1,6 +1,7 @@
 package com.pointwest.pastebook.pastebook_backend.models;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
@@ -9,7 +10,6 @@ import java.util.Set;
 
 @Entity
 @Table(name = "post")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Post {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +27,7 @@ public class Post {
   @OneToMany(mappedBy = "post")
   private Set<Comment> comments;
 
-  @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)
+  @OneToMany(mappedBy = "post")
   private List<LikedPost> likes;
 
   public Post() {}
