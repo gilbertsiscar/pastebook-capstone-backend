@@ -3,20 +3,12 @@ package com.pointwest.pastebook.pastebook_backend.services;
 import com.pointwest.pastebook.pastebook_backend.config.JwtToken;
 import com.pointwest.pastebook.pastebook_backend.models.User;
 import com.pointwest.pastebook.pastebook_backend.repositories.UserRepository;
-import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import java.io.UnsupportedEncodingException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -31,74 +23,14 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private JavaMailSender mailSender;
-
-    @Autowired
-    JwtToken jwtToken;
+    private JwtToken jwtToken;
 
     // create user
-    public ResponseEntity createUser(User user, String siteURL)
-            throws UnsupportedEncodingException, MessagingException {
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-
-        userRepository.save(user);
+    public ResponseEntity createUser(User user) {
         user.setProfileUrl(user.getFirstName()+user.getLastName()+user.getId());
         userRepository.save(user);
 
-        String randomCode = RandomString.make(64);
-        user.setVerificationCode(randomCode);
-        user.setEnabled(false);
-        userRepository.save(user);
-        sendVerificationEmail(user, "http://localhost:4200");
         return new ResponseEntity("User created successfully!", HttpStatus.CREATED);
-    }
-
-    // send verification email
-    private void sendVerificationEmail(User user, String siteURL)
-            throws MessagingException, UnsupportedEncodingException {
-        String toAddress = user.getEmail();
-        String fromAddress = "butternsnow@gmail.com";
-        String senderName = "Group 4 Pastebook";
-        String subject = "Please verify your registration";
-        String content = "Dear [[name]],<br>"
-                + "Please click the link below to verify your registration:<br>"
-                + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
-                + "Thank you,<br>"
-                + "Your company name.";
-
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-
-        helper.setFrom(fromAddress, senderName);
-        helper.setTo(toAddress);
-        helper.setSubject(subject);
-
-        content = content.replace("[[name]]", user.getFirstName());
-        String verifyURL = siteURL + "/verify?code=" + user.getVerificationCode();
-
-        content = content.replace("[[URL]]", verifyURL);
-
-        helper.setText(content, true);
-
-        mailSender.send(message);
-
-        System.out.println("Email has been sent");
-    }
-
-    public boolean verify(String verificationCode) {
-        User user = userRepository.findByVerificationCode(verificationCode);
-
-        if (user == null || user.isEnabled()) {
-            return false;
-        } else {
-            user.setVerificationCode(null);
-            user.setEnabled(true);
-            userRepository.save(user);
-
-            return true;
-        }
-
     }
 
     @Override
