@@ -1,138 +1,81 @@
 package com.pointwest.pastebook.pastebook_backend.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
-import java.sql.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name="post")
+@Table(name = "post")
 public class Post {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    // Properties
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "posts_seq")
-    @SequenceGenerator(name = "posts_seq", sequenceName = "sequence_posts", allocationSize = 1)
-    private Long id;
+  private String content;
 
-    @Column
-    private String content;
+  @Column(name = "created_at")
+  private String datetimeCreated;
 
-    @Column
-    private Date datetimeCreated;
+  @OneToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    @OneToOne
-    //@ManyToOne
-    @JoinColumn(name="user_id", nullable = false)
-    //@JoinColumn(name = "postOwner", referencedColumnName = "id")
-    private User postOwner;
+  @OneToMany(mappedBy = "post")
+  private Set<Comment> comments;
 
-//    // NOTE: this particular block of code is important
-//    @ManyToOne
-//    @JoinColumn(name = "receiver_user_id", referencedColumnName = "id")
-//    @JsonIgnore
-//    private User receiverUser;
+  @OneToMany(mappedBy = "post")
+  private Set<LikedPost> likes;
 
-    public Set<Comment> getComments() {
-        return comments;
-    }
+  public Post() {}
 
-    public void setComments(Set<Comment> comments) {
-        this.comments = comments;
-    }
+  public Post(String content) {
+    this.content = content;
+  }
 
-    public Set<LikedPost> getLikes() {
-        return likes;
-    }
+  public String getDatetimeCreated() {
+    return datetimeCreated;
+  }
 
-    public void setLikes(Set<LikedPost> likes) {
-        this.likes = likes;
-    }
+  public void setDatetimeCreated(String datetimeCreated) {
+    this.datetimeCreated = datetimeCreated;
+  }
 
-    @OneToMany(mappedBy = "post")
-    private Set<Comment> comments;
+  public User getUser() {
+    return user;
+  }
 
-    @OneToMany(mappedBy = "post")
-    private Set<LikedPost> likes;
+  public void setUser(User user) {
+    this.user = user;
+  }
 
-    //Users tagged in a post
-//    @OneToMany(mappedBy="post")
-//    @JsonIgnore
-//    private Set<User> taggedUsers;
+  public Set<Comment> getComments() {
+    return comments;
+  }
 
-    @ManyToMany(cascade = { CascadeType.ALL })
-    @JoinTable(
-            name = "TaggedUsers",
-            joinColumns = { @JoinColumn(name = "post_id", referencedColumnName = "id" ) },
-            inverseJoinColumns = { @JoinColumn(name = "user_id" , referencedColumnName = "id") }
-    )
-    Set<User> taggedUsers = new HashSet<>();
+  public void setComments(Set<Comment> comments) {
+    this.comments = comments;
+  }
 
-    public Post() {
-    }
+  public Set<LikedPost> getLikes() {
+    return likes;
+  }
 
-    public Post(String content, User postOwner) {
-        this.content = content;
-        this.postOwner = postOwner;
-        //  this.receiverUser = receiverUser;
-    }
+  public void setLikes(Set<LikedPost> likes) {
+    this.likes = likes;
+  }
 
-    public Set<User> getTaggedUsers() {
-        return taggedUsers;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setTaggedUsers(Set<User> taggedUsers) {
-        this.taggedUsers = taggedUsers;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public void setPostOwner(User postOwner) {
-        this.postOwner = postOwner;
-    }
+  public String getContent() {
+    return content;
+  }
 
-    // Constructors
-
-
-    // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Date getDatetimeCreated() {
-        return datetimeCreated;
-    }
-
-    public void setDatetimeCreated(Date datetimeCreated) {
-        this.datetimeCreated = datetimeCreated;
-    }
-
-//    public User getReceiverUser() {
-//        return receiverUser;
-//    }
-//
-//    public void setReceiverUser(User receiverUser) {
-//        this.receiverUser = receiverUser;
-//    }
-
-//    public Set<Comment> getComments() {
-//        return comments;
-//    }
-//
-//    public void setComments(Set<Comment> comments) {
-//        this.comments = comments;
-//    }
+  public void setContent(String content) {
+    this.content = content;
+  }
 }
