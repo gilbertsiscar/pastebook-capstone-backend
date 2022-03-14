@@ -13,6 +13,9 @@ public class Friend {
     private Long id;
 
     @Column
+    private boolean isActive = true;
+
+    @Column
     private String datetimeCreated;
 
     @OneToOne
@@ -35,6 +38,13 @@ public class Friend {
 
     // This is an important constructor for the FriendService
     public Friend(String datetimeCreated, User requester, User recipient) {
+        this.datetimeCreated = datetimeCreated;
+        this.requester = requester;
+        this.recipient = recipient;
+    }
+
+    public Friend(boolean isActive, String datetimeCreated, User requester, User recipient) {
+        this.isActive = isActive;
         this.datetimeCreated = datetimeCreated;
         this.requester = requester;
         this.recipient = recipient;
@@ -73,5 +83,11 @@ public class Friend {
         this.recipient = recipient;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
 
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 }

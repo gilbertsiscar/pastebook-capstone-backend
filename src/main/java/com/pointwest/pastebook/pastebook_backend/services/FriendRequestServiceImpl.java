@@ -51,7 +51,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         String formattedDate = dateObject.format(formatDateObj);
 
         // creating a record in the friend_requests table where the record contains the senderId and the receiverId
-        FriendRequest friendRequest = new FriendRequest(formattedDate, sender, receiver);
+        FriendRequest friendRequest = new FriendRequest(true, formattedDate, sender, receiver);
 
         // save the friendRequest
         friendRequestRepository.save(friendRequest);
