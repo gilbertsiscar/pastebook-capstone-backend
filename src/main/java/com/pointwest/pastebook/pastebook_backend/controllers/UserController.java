@@ -63,7 +63,7 @@ public class UserController {
 
             URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/users/register").toUriString());
 
-            return ResponseEntity.created(uri).body(userService.createUser(user));
+            return ResponseEntity.created(uri).body(user);
 
         }
 
