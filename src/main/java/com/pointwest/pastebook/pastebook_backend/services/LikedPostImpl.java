@@ -30,7 +30,7 @@ public class LikedPostImpl implements LikedPostService {
     private JwtToken jwtToken;
 
     @Override
-    public boolean likePost(Long postId, String token) {
+    public void likePost(Long postId, String token) {
         Optional<Post> postToLike = postRepository.findById(postId);
         Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
         User user = userRepository.findById(authenticatedId).get();
@@ -42,14 +42,11 @@ public class LikedPostImpl implements LikedPostService {
             postToLike.get().getLikes().add(commenceLike);
             postRepository.save(postToLike.get());
             likedPostRepository.save(commenceLike);
-            return true;
-        }else{
-            return false;
         }
     }
 
     @Override
-    public ResponseEntity unlikePost(Long postId, String token) {
+    public void unlikePost(Long postId, String token) {
         Optional<Post> postToUnLike = postRepository.findById(postId);
         if(postToUnLike.isPresent()){
             Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
@@ -60,9 +57,6 @@ public class LikedPostImpl implements LikedPostService {
             postToUnLike.get().getLikes().remove(unlike);
             postRepository.save(postToUnLike.get());
             likedPostRepository.delete(unlike);
-            return new ResponseEntity("Unliked post", HttpStatus.OK);
-        }else{
-            return new ResponseEntity("Post not found!", HttpStatus.NOT_FOUND);
         }
     }
 
