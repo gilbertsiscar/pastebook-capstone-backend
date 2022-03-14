@@ -43,8 +43,8 @@ public class UserController {
             String encodedPassword = new BCryptPasswordEncoder().encode(password);
 
             User user = new User();
-            user.setFirstName(body.get("firstname"));
-            user.setLastName(body.get("lastname"));
+            user.setFirstName(body.get("firstName"));
+            user.setLastName(body.get("lastName"));
             user.setBirthday(body.get("birthday"));
             user.setEmail(body.get("email"));
             user.setMobileNumber(body.get("mobilenumber"));

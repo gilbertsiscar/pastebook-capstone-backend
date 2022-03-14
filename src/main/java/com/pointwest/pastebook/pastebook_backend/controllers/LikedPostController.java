@@ -2,7 +2,6 @@ package com.pointwest.pastebook.pastebook_backend.controllers;
 
 import com.pointwest.pastebook.pastebook_backend.services.LikedPostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,22 +9,17 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RequestMapping(value = "/api")
 public class LikedPostController {
-    @Autowired
-    LikedPostService likedPostService;
+  @Autowired private LikedPostService likedPostService;
 
-    @RequestMapping(value="/like/{postId}", method = RequestMethod.GET)
-    public ResponseEntity<Object> likePost(
-            @PathVariable Long postId,
-            @RequestHeader (value = "Authorization") String stringToken)
-    {
-        return likedPostService.likePost(postId, stringToken);
-    }
+  @PostMapping("/like/{postId}")
+  public ResponseEntity<Object> likePost(
+      @PathVariable Long postId, @RequestHeader(value = "Authorization") String stringToken) {
+    return ResponseEntity.ok().body(likedPostService.likePost(postId, stringToken));
+  }
 
-    @RequestMapping(value="/like/{postId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Object> unLikePost(
-            @PathVariable Long postId,
-            @RequestHeader (value = "Authorization") String stringToken)
-    {
-        return likedPostService.unlikePost(postId, stringToken);
-    }
+  @RequestMapping(value = "/like/{postId}", method = RequestMethod.DELETE)
+  public ResponseEntity<Object> unLikePost(
+      @PathVariable Long postId, @RequestHeader(value = "Authorization") String stringToken) {
+    return likedPostService.unlikePost(postId, stringToken);
+  }
 }
