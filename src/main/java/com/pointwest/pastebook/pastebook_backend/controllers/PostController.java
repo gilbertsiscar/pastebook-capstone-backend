@@ -39,10 +39,16 @@ public class PostController {
     return ResponseEntity.ok().body(postService.getPostById(postId));
   }
 
-  // GET /api/posts
-  @GetMapping
-  public ResponseEntity<Iterable<Post>> getAllPostFromUser(
+  // GET /api/posts/user
+  @GetMapping("/user")
+  public ResponseEntity<Iterable<Post>> getPostFromUser(
       @RequestHeader(value = "Authorization") String token) {
     return ResponseEntity.ok().body(postService.getPostsFromUser(token));
+  }
+
+  // GET /api/posts
+  @GetMapping
+  public ResponseEntity<Iterable<Post>> getAllPosts() {
+    return ResponseEntity.ok().body(postService.getAllPost());
   }
 }
