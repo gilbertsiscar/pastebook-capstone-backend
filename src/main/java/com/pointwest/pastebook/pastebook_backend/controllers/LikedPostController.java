@@ -1,12 +1,9 @@
 package com.pointwest.pastebook.pastebook_backend.controllers;
 
-import com.pointwest.pastebook.pastebook_backend.models.User;
 import com.pointwest.pastebook.pastebook_backend.services.LikedPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -17,13 +14,15 @@ public class LikedPostController {
   @PostMapping("/like/{postId}")
   public ResponseEntity<Object> likePost(
       @PathVariable Long postId, @RequestHeader(value = "Authorization") String stringToken) {
-    return ResponseEntity.ok().body(likedPostService.likePost(postId, stringToken));
+    likedPostService.likePost(postId, stringToken);
+    return ResponseEntity.ok().body(true);
   }
 
   @RequestMapping(value = "/like/{postId}", method = RequestMethod.DELETE)
   public ResponseEntity<Object> unLikePost(
       @PathVariable Long postId, @RequestHeader(value = "Authorization") String stringToken) {
-    return likedPostService.unlikePost(postId, stringToken);
+    likedPostService.unlikePost(postId, stringToken);
+    return ResponseEntity.ok().body(true);
   }
 
   @GetMapping("/like/{postId}")
