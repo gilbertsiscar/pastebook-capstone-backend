@@ -6,10 +6,9 @@ import com.pointwest.pastebook.pastebook_backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -21,13 +20,16 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Autowired
-    JwtToken jwtToken;
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtToken jwtToken;
 
     // create user
     public ResponseEntity createUser(User user) {
-        userRepository.save(user);
         user.setProfileUrl(user.getFirstName()+user.getLastName()+user.getId());
         userRepository.save(user);
+
         return new ResponseEntity("User created successfully!", HttpStatus.CREATED);
     }
 
@@ -107,7 +109,7 @@ public class UserServiceImpl implements UserService {
             //check if empty later
             user.setAboutMe(aboutMe);
             userRepository.save(user);
-            return new ResponseEntity("Aboue me Updated", HttpStatus.OK);
+            return new ResponseEntity("About me Updated", HttpStatus.OK);
         }else{
             return new ResponseEntity("You are not authorized to edit this aboutMe", HttpStatus.UNAUTHORIZED);
         }

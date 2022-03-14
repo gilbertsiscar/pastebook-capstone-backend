@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,8 +43,8 @@ public class UserController {
             String encodedPassword = new BCryptPasswordEncoder().encode(password);
 
             User user = new User();
-            user.setFirstName(body.get("firstname"));
-            user.setLastName(body.get("lastname"));
+            user.setFirstName(body.get("firstName"));
+            user.setLastName(body.get("lastName"));
             user.setBirthday(body.get("birthday"));
             user.setEmail(body.get("email"));
             user.setMobileNumber(body.get("mobilenumber"));
@@ -59,7 +61,9 @@ public class UserController {
             user.setProfileUrl("");
             user.setProfilePic("");
 
-            return userService.createUser(user);
+            URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/users/register").toUriString());
+
+            return ResponseEntity.created(uri).body(userService.createUser(user));
 
         }
 
