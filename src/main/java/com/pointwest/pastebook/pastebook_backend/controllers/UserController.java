@@ -73,6 +73,15 @@ public class UserController {
         return new ResponseEntity<>(userService.getUser(userid,stringToken), HttpStatus.OK);
     }
 
+    //
+    @RequestMapping(value="/users/profile/{profileUrl}", method = RequestMethod.GET)
+    public ResponseEntity<Object> getProfile(
+            @PathVariable String profileUrl
+            ,@RequestHeader (value = "Authorization") String stringToken)
+    {
+        return userService.getProfile(profileUrl,stringToken);
+    }
+
     // update user details
     @RequestMapping(value="/users/details/{userid}", method = RequestMethod.PUT)
     public ResponseEntity<Object> updateUserPersonalDetails(@RequestBody Map<String, String> body
@@ -105,9 +114,11 @@ public class UserController {
 //    }
 
     // search user
-    @RequestMapping(value="/users/search", method = RequestMethod.GET)
-    public ResponseEntity<Object> searchUser(@RequestParam(value="name", defaultValue="") String searchTerm) {
-        return userService.searchUser(searchTerm);
+    @RequestMapping(value="/users/search/{searchTerm}", method = RequestMethod.GET)
+    public ResponseEntity<Object> searchUser(
+            @PathVariable String searchTerm
+            ,@RequestHeader (value = "Authorization") String stringToken) {
+        return userService.searchUser(searchTerm, stringToken);
     }
 
     @RequestMapping(value="/users/aboutme/{userId}", method = RequestMethod.PUT)

@@ -66,6 +66,16 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public ResponseEntity getProfile(String profileUrl, String token) {
+        //token checker
+        User user= userRepository.getUserProfileByUrl(profileUrl);
+        if(user != null)
+            return new ResponseEntity(user, HttpStatus.OK);
+        else
+            return new ResponseEntity("User not found!", HttpStatus.NOT_FOUND);
+    }
+
 
     @Override
     public ResponseEntity updateUserPersonalDetails(User user, Long id, String token) {
@@ -104,7 +114,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // search user
-    public ResponseEntity searchUser(String searchTerm) {
+    public ResponseEntity searchUser(String searchTerm, String token) {
         ArrayList<User> searchedUsers = new ArrayList<>();
         ArrayList<String> searchedUsersUrl = new ArrayList<>();
         ArrayList<User> searchedUsersAlphabetical = new ArrayList<>();

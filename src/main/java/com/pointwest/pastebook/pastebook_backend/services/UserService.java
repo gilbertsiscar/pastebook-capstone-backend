@@ -20,9 +20,10 @@ public interface UserService {
 
     // For getting
     User getUser(Long id, String token);
+    ResponseEntity getProfile(String profileUrl, String token);
 
     // search user
-    ResponseEntity searchUser(String searchTerm);
+    ResponseEntity searchUser(String searchTerm, String token);
 
     Optional<User> findByEmail(String email);
 }

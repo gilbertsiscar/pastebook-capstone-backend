@@ -44,9 +44,15 @@ public class AuthController {
 
         final String token = jwtToken.generateToken(userDetails);
 
+        String firstName = userService.findByEmail(userDetails.getUsername()).get().getFirstName();
+        String lastname = userService.findByEmail(userDetails.getUsername()).get().getFirstName();
+
+
+
         response.put("result", "successful");
         response.put("id", jwtToken.getIdFromToken(token));
         response.put("email", userDetails.getUsername());
+        response.put("name", firstName + " " + lastname);
         response.put("token", token);
 
         //return ResponseEntity.ok(new JwtResponse(token));

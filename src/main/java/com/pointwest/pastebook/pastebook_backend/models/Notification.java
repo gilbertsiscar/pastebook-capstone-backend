@@ -18,6 +18,10 @@ public class Notification {
     @Column
     private String status;
 
+    @OneToOne
+    @JoinColumn(name = "post_id", referencedColumnName = "id")
+    private Post post;
+
     @Column
     private String datetimeCreated;
 
