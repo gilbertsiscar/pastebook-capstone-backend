@@ -1,5 +1,6 @@
 package com.pointwest.pastebook.pastebook_backend.controllers;
 
+import com.pointwest.pastebook.pastebook_backend.models.Comment;
 import com.pointwest.pastebook.pastebook_backend.repositories.CommentRepository;
 import com.pointwest.pastebook.pastebook_backend.services.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,20 +11,26 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/api/comment")
 public class CommentController {
     @Autowired
     CommentService commentService;
 
-    @RequestMapping(value="/comment/{postId}", method = RequestMethod.POST)
-    public ResponseEntity<Object> addCommentToPost(
+    @PostMapping("/{postId}")
+    public ResponseEntity<Comment> addCommentToPost(
             @PathVariable Long postId,
             @RequestBody Map<String, String> body,
             @RequestHeader (value = "Authorization") String stringToken)
     {
 
-        return commentService.commentPost(postId,body.get("comment"), stringToken);
+        return ResponseEntity.ok().body(commentService.commentPost(postId,body.get("comment"), stringToken));
     }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<Iterable<Comment>> getCommentInPost(@PathVariable Long postId) {
+        return ResponseEntity.ok().body(commentService.getCommentsInPost(postId));
+    }
+
 
     @RequestMapping(value="/comment/{commentId}", method = RequestMethod.DELETE)
     public ResponseEntity<Object> removeCommentTOPost(
@@ -42,7 +49,5 @@ public class CommentController {
 
         return commentService.editComment(commentId,body.get("comment"), stringToken);
     }
-
-
 
 }
