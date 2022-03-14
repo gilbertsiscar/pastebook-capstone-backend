@@ -11,7 +11,6 @@ import java.util.Set;
 
 @Entity
 @Table(name="users")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
 
     // Properties
@@ -74,6 +73,7 @@ public class User {
     // NOTE: this particular block of code is important
     // OneToMany relationship between User Model and Post Model
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+    @JsonIgnore
     private List<Post> posts = new ArrayList<>();
 
     public List<Post> getPosts() {
@@ -84,7 +84,8 @@ public class User {
         this.posts = posts;
     }
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<LikedPost> likedPost = new ArrayList<>();
 
     public List<LikedPost> getLikedPost() {

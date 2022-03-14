@@ -9,4 +9,6 @@ public interface PostService {
   Post getPostById(Long id);
 
   Iterable<Post> getPostsFromUser(String stringToken);
+
+  Iterable<Post> getAllPost();
 }

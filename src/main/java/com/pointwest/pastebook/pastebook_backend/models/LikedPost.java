@@ -1,13 +1,13 @@
 package com.pointwest.pastebook.pastebook_backend.models;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "liked_posts")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class LikedPost {
 
   // Properties
@@ -17,12 +17,14 @@ public class LikedPost {
   private Long id;
 
   // This refers to the user who 'likes' the post
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
+  @JsonIgnore
   private User user;
 
-  @ManyToOne
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id")
+  @JsonIgnore
   private Post post;
 
   // Constructors

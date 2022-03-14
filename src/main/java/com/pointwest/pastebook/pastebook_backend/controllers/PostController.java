@@ -2,6 +2,7 @@ package com.pointwest.pastebook.pastebook_backend.controllers;
 
 import com.pointwest.pastebook.pastebook_backend.models.Post;
 import com.pointwest.pastebook.pastebook_backend.models.PostRequest;
+import com.pointwest.pastebook.pastebook_backend.models.User;
 import com.pointwest.pastebook.pastebook_backend.services.PostService;
 import com.pointwest.pastebook.pastebook_backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +39,16 @@ public class PostController {
     return ResponseEntity.ok().body(postService.getPostById(postId));
   }
 
-  // GET /api/posts
-  @GetMapping
-  public ResponseEntity<Iterable<Post>> getAllPostFromUser(
+  // GET /api/posts/user
+  @GetMapping("/user")
+  public ResponseEntity<Iterable<Post>> getPostFromUser(
       @RequestHeader(value = "Authorization") String token) {
     return ResponseEntity.ok().body(postService.getPostsFromUser(token));
+  }
+
+  // GET /api/posts
+  @GetMapping
+  public ResponseEntity<Iterable<Post>> getAllPosts() {
+    return ResponseEntity.ok().body(postService.getAllPost());
   }
 }
