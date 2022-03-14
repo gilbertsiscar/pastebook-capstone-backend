@@ -30,6 +30,7 @@ public class UserServiceImpl implements UserService {
         user.setProfileUrl(user.getFirstName()+user.getLastName()+user.getId());
         userRepository.save(user);
 
+
         return new ResponseEntity("User created successfully!", HttpStatus.CREATED);
     }
 
@@ -66,6 +67,7 @@ public class UserServiceImpl implements UserService {
 
         // deny
 
+
     }
 
     @Override
@@ -97,6 +99,7 @@ public class UserServiceImpl implements UserService {
             return new ResponseEntity("You are not authorized to edit this profile", HttpStatus.UNAUTHORIZED);
         }
     }
+
 
     @Override
     public ResponseEntity updateAboutMe(String aboutMe, Long id, String token) {
