@@ -22,8 +22,9 @@ public class PostServiceImpl implements PostService {
   @Override
   public Post createPost(Post post, String token) {
     Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
-    User tokenUser = userRepository.findById(authenticatedId).get();
-    post.setUser(tokenUser);
+    User user = userRepository.findById(authenticatedId).get();
+
+    post.setUser(user);
 
     return postRepository.save(post);
   }

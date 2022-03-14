@@ -1,13 +1,17 @@
 package com.pointwest.pastebook.pastebook_backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name="users")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
 
     // Properties
@@ -55,14 +59,6 @@ public class User {
 
     private boolean enabled;
 
-    public Set<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(Set<Post> posts) {
-        this.posts = posts;
-    }
-
 //    public Set<Post> getTaggedpost() {
 //        return taggedpost;
 //    }
@@ -74,12 +70,30 @@ public class User {
     @Column
     private String profileUrl;
 
+
     // NOTE: this particular block of code is important
     // OneToMany relationship between User Model and Post Model
-    @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private Set<Post> posts;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+    private List<Post> posts = new ArrayList<>();
 
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
+    private List<LikedPost> likedPost = new ArrayList<>();
+
+    public List<LikedPost> getLikedPost() {
+        return likedPost;
+    }
+
+    public void setLikedPost(List<LikedPost> likedPost) {
+        this.likedPost = likedPost;
+    }
 
     //Tagged posts
 //    @ManyToOne
