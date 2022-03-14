@@ -54,6 +54,10 @@ public class User {
     @Column
     private String aboutMe;
 
+    @Column
+    private String verificationCode;
+
+    private boolean enabled;
 
 //    public Set<Post> getTaggedpost() {
 //        return taggedpost;
@@ -244,5 +248,22 @@ public class User {
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
     }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
 
 }

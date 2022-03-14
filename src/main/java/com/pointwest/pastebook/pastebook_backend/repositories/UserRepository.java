@@ -13,4 +13,9 @@ public interface UserRepository extends JpaRepository<User, Object> {
             nativeQuery = true)
     User getUserProfileByUrl(String profileUrl);
     User findByEmail(String email);
+
+    @Query("SELECT u FROM User u WHERE u.verificationCode = ?1")
+    public User findByVerificationCode(String code);
+
 }
+

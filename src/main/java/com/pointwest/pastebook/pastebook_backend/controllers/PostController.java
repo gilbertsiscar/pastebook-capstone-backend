@@ -15,7 +15,6 @@ import java.time.format.DateTimeFormatter;
 @CrossOrigin
 @RequestMapping(value = "/api/posts")
 public class PostController {
-
   @Autowired private PostService postService;
 
   // POST /api/posts
