@@ -26,6 +26,7 @@ public class FriendController {
         return friendService.deleteFriend(requesterId, recipientId);
     }
 
+
     // get all friends given a particular page id
     @RequestMapping(value="/api/friends/{pageId}", method = RequestMethod.GET)
     public ResponseEntity<Object> getFriends(@PathVariable Long pageId) {
@@ -37,4 +38,5 @@ public class FriendController {
     public ResponseEntity<Object> getOneFriend(@PathVariable Long requesterId, @PathVariable Long recipientId) {
         return friendService.getOneFriend(requesterId, recipientId);
     }
+
 }
