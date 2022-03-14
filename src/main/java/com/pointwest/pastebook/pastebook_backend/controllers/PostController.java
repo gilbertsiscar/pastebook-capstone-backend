@@ -45,8 +45,9 @@ public class PostController {
         post.setContent(postRequest.getContent());
         //post.setDatetimeCreated(Date.valueOf(postRequest.getDate_created()));
         //The backend creates the date instead
-        ArrayList<String> taggedIds = postRequest.getTaggedIds();
-        return postService.createPost(post, stringToken, taggedIds);
+//        ArrayList<String> taggedIds = postRequest.getTaggedIds();
+//        return postService.createPost(post, stringToken, taggedIds);
+        return null;
     }
 
     //Get all related post from a user, can be yours or others
@@ -64,7 +65,8 @@ public class PostController {
 //        //post.setDatetimeCreated(Date.valueOf(postRequest.getDate_created()));
 //        ArrayList<String> taggedIds = postRequest.getTaggedIds();
 //        return postService.createPost(post, stringToken, taggedIds);
-        return new ResponseEntity<>(postService.getAllPostRelatedToUser(userId, stringToken), HttpStatus.OK);
+//        return new ResponseEntity<>(postService.getAllPostRelatedToUser(userId, stringToken), HttpStatus.OK);
+        return null;
     }
 
     // getting all posts of a particular user
