@@ -14,7 +14,7 @@ public class Friend {
 
     @Column
     private boolean isActive = true;
-
+  
     @Column
     private String datetimeCreated;
 
