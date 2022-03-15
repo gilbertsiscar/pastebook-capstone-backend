@@ -28,7 +28,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
 
     @Autowired
     private FriendRepository friendRepository;
-
+    //
     // send friend request
     public ResponseEntity sendFriendRequest(HashMap<String, Object> friendRequestMap)  {
 
