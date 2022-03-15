@@ -21,7 +21,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     private PasswordEncoder passwordEncoder;
-  
+
     @Autowired
     private JwtToken jwtToken;
 
@@ -31,14 +31,13 @@ public class UserServiceImpl implements UserService {
             throw new EntityDuplicateException(User.class, "email", user.getEmail());
         }
         //When verified, change status to verify and set profileUrl
-        prodVerify(user);
-        return userRepository.save(user);
+        return userRepository.save(prodVerify(user));
     }
 
-    private void prodVerify(User user) {
+    private User prodVerify(User user) {
         user.setEnabled(true);
         user.setProfileUrl(user.getFirstName() + user.getLastName() + user.getId());
-        userRepository.save(user);
+        return user;
     }
 
 //    @Override
