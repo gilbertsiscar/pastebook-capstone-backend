@@ -63,6 +63,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/posts").permitAll()
                 .antMatchers("/api/like/{postId}").permitAll()
                 .antMatchers("/api/comment/{postId}").permitAll()
+                .antMatchers("/onlineconnection").permitAll()
+
+                .antMatchers(HttpMethod.POST, "/api/friendRequests").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/friendRequests/{id}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/friendRequests/{senderId}/{receiverId}").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/api/friendRequests/{senderId}/{receiverId}").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/friends").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/api/friends/{requesterId}/{recipientId}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/friends/{pageId}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/friends/{requesterId}/{recipientId}").permitAll()
+
 
                 .antMatchers(HttpMethod.POST, "/api/friendRequests").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/friendRequests/{id}").permitAll()
