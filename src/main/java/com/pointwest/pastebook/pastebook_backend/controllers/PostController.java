@@ -2,7 +2,6 @@ package com.pointwest.pastebook.pastebook_backend.controllers;
 
 import com.pointwest.pastebook.pastebook_backend.models.Image;
 import com.pointwest.pastebook.pastebook_backend.models.Post;
-import com.pointwest.pastebook.pastebook_backend.services.ImageService;
 import com.pointwest.pastebook.pastebook_backend.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,15 +12,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/api/posts")
 public class PostController {
   @Autowired private PostService postService;
-
-  @Autowired private ImageService imageService;
 
   // POST /api/posts
   @PostMapping
