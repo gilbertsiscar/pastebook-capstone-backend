@@ -5,12 +5,14 @@ import com.pointwest.pastebook.pastebook_backend.models.Post;
 import com.pointwest.pastebook.pastebook_backend.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin
@@ -30,15 +32,17 @@ public class PostController {
     LocalDateTime now = LocalDateTime.now();
     post.setDatetimeCreated(dtf.format(now));
 
-    if (!imageFile.isEmpty()) {
+    if (imageFile != null) {
       Image image =
           new Image(
-              imageFile.getOriginalFilename(), imageFile.getContentType(), imageFile.getBytes());
+              StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename())),
+              imageFile.getContentType(),
+              imageFile.getBytes());
       post.setImage(image);
     }
 
-    if (!content.isEmpty()) {
-      post.setContent(content);
+    if (content != null) {
+      post.setContent(StringUtils.cleanPath(content));
     }
 
     return ResponseEntity.ok().body(postService.createPost(post, stringToken));
