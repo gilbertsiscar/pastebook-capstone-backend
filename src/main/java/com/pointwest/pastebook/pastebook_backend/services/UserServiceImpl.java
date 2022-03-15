@@ -1,15 +1,15 @@
 package com.pointwest.pastebook.pastebook_backend.services;
 
 import com.pointwest.pastebook.pastebook_backend.config.JwtToken;
+import com.pointwest.pastebook.pastebook_backend.exceptions.EntityDuplicateException;
 import com.pointwest.pastebook.pastebook_backend.models.User;
 import com.pointwest.pastebook.pastebook_backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -21,16 +21,25 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Autowired
-    JwtToken jwtToken;
+    private PasswordEncoder passwordEncoder;
+  
+    @Autowired
+    private JwtToken jwtToken;
 
-    // create user
-    public ResponseEntity createUser(User user) {
+    public User createUser(User user) {
+        Optional<User> userDb = Optional.ofNullable(userRepository.findByEmail(user.getEmail()));
+        if (userDb.isPresent()) {
+            throw new EntityDuplicateException(User.class, "email", user.getEmail());
+        }
+        //When verified, change status to verify and set profileUrl
+        prodVerify(user);
+        return userRepository.save(user);
+    }
 
-        userRepository.save(user);
+    private void prodVerify(User user){
+        user.setEnabled(true);
         user.setProfileUrl(user.getFirstName()+user.getLastName()+user.getId());
         userRepository.save(user);
-
-        return new ResponseEntity("User created successfully!", HttpStatus.CREATED);
     }
 
     @Override
@@ -111,7 +120,7 @@ public class UserServiceImpl implements UserService {
             //check if empty later
             user.setAboutMe(aboutMe);
             userRepository.save(user);
-            return new ResponseEntity("Aboue me Updated", HttpStatus.OK);
+            return new ResponseEntity("About me Updated", HttpStatus.OK);
         }else{
             return new ResponseEntity("You are not authorized to edit this aboutMe", HttpStatus.UNAUTHORIZED);
         }

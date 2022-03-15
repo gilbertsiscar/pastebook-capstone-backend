@@ -19,19 +19,19 @@ import java.util.Optional;
 @Service
 public class CommentServiceImpl implements CommentService{
     @Autowired
-    PostRepository postRepository;
+    private PostRepository postRepository;
 
     @Autowired
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    JwtToken jwtToken;
+    private JwtToken jwtToken;
 
     @Override
-    public ResponseEntity commentPost(Long postId, String content, String token) {
+    public Comment commentPost(Long postId, String content, String token) {
         Optional<Post> postToComment = postRepository.findById(postId);
         if(postToComment.isPresent()){
             Comment comment = new Comment();
@@ -41,15 +41,11 @@ public class CommentServiceImpl implements CommentService{
             User user = userRepository.findById(authenticatedId).get();
             comment.setUser(user);
             comment.setContent(content);
-            //comment.setDatetimeCreated();
-
             post.getComments().add(comment);
             postRepository.save(post);
-
-            commentRepository.save(comment);
-            return new ResponseEntity("Commented on post", HttpStatus.OK);
+            return commentRepository.save(comment);
         }else{
-            return new ResponseEntity("Post not found!", HttpStatus.NOT_FOUND);
+            throw new RuntimeException("An error occurred");
         }
     }
 
@@ -91,5 +87,10 @@ public class CommentServiceImpl implements CommentService{
         }else{
             return new ResponseEntity("Comment not found!", HttpStatus.NOT_FOUND);
         }
+    }
+
+    @Override
+    public Iterable<Comment> getCommentsInPost(Long postId) {
+        return postRepository.findById(postId).get().getComments();
     }
 }
