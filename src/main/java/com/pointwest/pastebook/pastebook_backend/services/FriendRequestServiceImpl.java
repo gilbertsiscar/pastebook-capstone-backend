@@ -28,9 +28,8 @@ public class FriendRequestServiceImpl implements FriendRequestService {
 
     @Autowired
     private FriendRepository friendRepository;
-    //
-    // send friend request
 
+    // send friend request
     public ResponseEntity sendFriendRequest(HashMap<String, Object> friendRequestMap)  {
 
         String senderIdStr = friendRequestMap.get("senderId").toString();
@@ -73,6 +72,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
                 return new ResponseEntity("You already added this person!", HttpStatus.CONFLICT);
             }
         }
+
 
         // otherwise, if they're not yet friends, automatic na mag run yung code below (automatic rin mag stop yung function since we have the return statement inside the for-loop)
 
