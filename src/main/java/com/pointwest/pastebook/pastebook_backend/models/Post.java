@@ -1,9 +1,5 @@
 package com.pointwest.pastebook.pastebook_backend.models;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
@@ -30,10 +26,21 @@ public class Post {
   @OneToMany(mappedBy = "post")
   private List<LikedPost> likes;
 
+  @OneToOne(cascade = CascadeType.PERSIST)
+  private Image image;
+
   public Post() {}
 
   public Post(String content) {
     this.content = content;
+  }
+
+  public Image getImage() {
+    return image;
+  }
+
+  public void setImage(Image image) {
+    this.image = image;
   }
 
   public List<LikedPost> getLikes() {
