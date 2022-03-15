@@ -60,7 +60,7 @@ public class FriendServiceImpl implements FriendService {
                 String formattedDate = dateObject.format(formatDateObj);
 
                 // creating the Friend object based on the requester and recipient (User) objects
-                Friend friend = new Friend(formattedDate, requester, recipient);
+                Friend friend = new Friend(true, formattedDate, requester, recipient);
 
                 friendRepository.save(friend);
 

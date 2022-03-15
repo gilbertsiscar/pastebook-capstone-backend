@@ -26,7 +26,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
 
     @Autowired
     private FriendRepository friendRepository;
-
+//
     // send friend request
     public ResponseEntity sendFriendRequest(Long senderId, Long receiverId) {
         // Case 1: NOT POSSIBLE FOR A USER TO SEND A FRIEND REQUEST TO HIMSELF
@@ -41,6 +41,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         for (Friend friend : friendRepository.findAll()) {
             if ((friend.getRequester().getId() == senderId && friend.getRecipient().getId() == receiverId) || friend.getRequester().getId() == receiverId && friend.getRecipient().getId() == senderId ) {
                 return new ResponseEntity("You're already friends!", HttpStatus.CONFLICT);
+
             }
         }
 
@@ -50,6 +51,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
                 return new ResponseEntity("You already added this person!", HttpStatus.CONFLICT);
             }
         }
+
 
         // otherwise, if they're not yet friends, automatic na mag run yung code below (automatic rin mag stop yung function since we have the return statement inside the for-loop)
 
@@ -63,7 +65,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         String formattedDate = dateObject.format(formatDateObj);
 
         // creating a record in the friend_requests table where the record contains the senderId and the receiverId
-        FriendRequest friendRequest = new FriendRequest(formattedDate, sender, receiver);
+        FriendRequest friendRequest = new FriendRequest(true, formattedDate, sender, receiver);
 
         // save the friendRequest
         friendRequestRepository.save(friendRequest);

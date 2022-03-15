@@ -3,7 +3,7 @@ package com.pointwest.pastebook.pastebook_backend.models;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
-
+//
 @Entity
 @Table(name = "post")
 public class Post {

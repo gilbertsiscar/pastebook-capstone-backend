@@ -13,6 +13,9 @@ public class FriendRequest {
     private Long id;
 
     @Column
+    private boolean isActive = true;
+
+    @Column
     private String datetimeCreated;
 
     @OneToOne
@@ -33,6 +36,13 @@ public class FriendRequest {
     }
 
     public FriendRequest(String datetimeCreated, User sender, User receiver) {
+        this.datetimeCreated = datetimeCreated;
+        this.sender = sender;
+        this.receiver = receiver;
+    }
+
+    public FriendRequest(boolean isActive, String datetimeCreated, User sender, User receiver) {
+        this.isActive = isActive;
         this.datetimeCreated = datetimeCreated;
         this.sender = sender;
         this.receiver = receiver;
@@ -71,4 +81,11 @@ public class FriendRequest {
         this.receiver = receiver;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 }

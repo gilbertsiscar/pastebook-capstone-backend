@@ -75,6 +75,7 @@ public class UserServiceImpl implements UserService {
 
         // deny
 
+
     }
 
     @Override
@@ -106,6 +107,7 @@ public class UserServiceImpl implements UserService {
             return new ResponseEntity("You are not authorized to edit this profile", HttpStatus.UNAUTHORIZED);
         }
     }
+
 
     @Override
     public ResponseEntity updateAboutMe(String aboutMe, Long id, String token) {
