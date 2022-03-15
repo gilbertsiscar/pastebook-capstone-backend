@@ -26,4 +26,14 @@ public interface UserService {
     ResponseEntity searchUser(String searchTerm, String token);
 
     Optional<User> findByEmail(String email);
+
+
+    // CODES FOR TESTING
+    ResponseEntity getUsersTest();
+
+    // get user
+    ResponseEntity getUserTest(Long id);
+
+
+
 }

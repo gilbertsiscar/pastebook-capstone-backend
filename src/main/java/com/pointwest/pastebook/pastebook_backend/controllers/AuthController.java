@@ -46,14 +46,16 @@ public class AuthController {
 
         String firstName = userService.findByEmail(userDetails.getUsername()).get().getFirstName();
         String lastname = userService.findByEmail(userDetails.getUsername()).get().getFirstName();
-
-
+        Long idNumber = userService.findByEmail(userDetails.getUsername()).get().getId();
+        String profileUrl = userService.findByEmail(userDetails.getUsername()).get().getProfileUrl();
 
         response.put("result", "successful");
         response.put("id", jwtToken.getIdFromToken(token));
         response.put("email", userDetails.getUsername());
         response.put("name", firstName + " " + lastname);
         response.put("token", token);
+        response.put("idNumber", Long.toString(idNumber));
+        response.put("profileUrl", profileUrl);
 
         //return ResponseEntity.ok(new JwtResponse(token));
         return new ResponseEntity<>(response, HttpStatus.OK);

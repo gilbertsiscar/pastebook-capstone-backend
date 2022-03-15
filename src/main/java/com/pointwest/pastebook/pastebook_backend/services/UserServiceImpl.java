@@ -20,7 +20,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
     private PasswordEncoder passwordEncoder;
   
     @Autowired
@@ -36,17 +35,38 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
-    private void prodVerify(User user){
+    private void prodVerify(User user) {
         user.setEnabled(true);
-        user.setProfileUrl(user.getFirstName()+user.getLastName()+user.getId());
+        user.setProfileUrl(user.getFirstName() + user.getLastName() + user.getId());
         userRepository.save(user);
     }
+
+//    @Override
+//    public ResponseEntity updateUserCredentials(User user, Long id, String token) {
+//        User userForUpdating = userRepository.findById(id).get();
+//
+//        if (userForUpdating != null) {
+//            String authenticatedEmail = jwtToken.getUsernameFromToken(token);
+//            if (authenticatedEmail.equalsIgnoreCase(userForUpdating.getEmail())) {
+//                // Add email checker if unique
+//                userForUpdating.setEmail(user.getEmail());
+//                userForUpdating.setPassword(user.getPassword());
+//                userRepository.save(userForUpdating);
+//                return new ResponseEntity("User details updated successfully", HttpStatus.OK);
+//            } else {
+//                return new ResponseEntity("You are not authorized to edit this profile", HttpStatus.UNAUTHORIZED);
+//            }
+//        } else {
+//            return new ResponseEntity("Profile not found", HttpStatus.NOT_FOUND);
+//        }
+//    }
+//
 
     @Override
     public ResponseEntity updateUserCredentials(User user, Long id, String token) {
         User userForUpdating = userRepository.findById(id).get();
 
-        if(userForUpdating != null) {
+        if (userForUpdating != null) {
             String authenticatedEmail = jwtToken.getUsernameFromToken(token);
             if (authenticatedEmail.equalsIgnoreCase(userForUpdating.getEmail())) {
                 // Add email checker if unique
@@ -57,7 +77,7 @@ public class UserServiceImpl implements UserService {
             } else {
                 return new ResponseEntity("You are not authorized to edit this profile", HttpStatus.UNAUTHORIZED);
             }
-        }else{
+        } else {
             return new ResponseEntity("Profile not found", HttpStatus.NOT_FOUND);
         }
     }
@@ -78,11 +98,42 @@ public class UserServiceImpl implements UserService {
 
     }
 
+//    @Override
+//    public ResponseEntity getProfile(String profileUrl, String token) {
+//        //token checker
+//        User user= userRepository.getUserProfileByUrl(profileUrl);
+//        if(user != null)
+//            return new ResponseEntity(user, HttpStatus.OK);
+//        else
+//            return new ResponseEntity("User not found!", HttpStatus.NOT_FOUND);
+//    }
+//
+//
+//    @Override
+//    public ResponseEntity updateUserPersonalDetails(User user, Long id, String token) {
+//        User userForUpdating = userRepository.findById(id).get();
+//
+//        String authenticatedEmail = jwtToken.getUsernameFromToken(token);
+//        if(authenticatedEmail.equalsIgnoreCase(userForUpdating.getEmail()))
+//        {
+//            userForUpdating.setFirstName(user.getFirstName());
+//            userForUpdating.setLastName(user.getLastName());
+//            userForUpdating.setGender(user.getGender());
+//            userForUpdating.setBirthday(user.getBirthday());
+//            userRepository.save(userForUpdating);
+//
+//            return new ResponseEntity("User details updated successfully", HttpStatus.OK);
+//        }else {
+//            return new ResponseEntity("You are not authorized to edit this profile", HttpStatus.UNAUTHORIZED);
+//        }
+//    }
+
+
     @Override
     public ResponseEntity getProfile(String profileUrl, String token) {
         //token checker
-        User user= userRepository.getUserProfileByUrl(profileUrl);
-        if(user != null)
+        User user = userRepository.getUserProfileByUrl(profileUrl);
+        if (user != null)
             return new ResponseEntity(user, HttpStatus.OK);
         else
             return new ResponseEntity("User not found!", HttpStatus.NOT_FOUND);
@@ -94,8 +145,7 @@ public class UserServiceImpl implements UserService {
         User userForUpdating = userRepository.findById(id).get();
 
         String authenticatedEmail = jwtToken.getUsernameFromToken(token);
-        if(authenticatedEmail.equalsIgnoreCase(userForUpdating.getEmail()))
-        {
+        if (authenticatedEmail.equalsIgnoreCase(userForUpdating.getEmail())) {
             userForUpdating.setFirstName(user.getFirstName());
             userForUpdating.setLastName(user.getLastName());
             userForUpdating.setGender(user.getGender());
@@ -103,7 +153,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(userForUpdating);
 
             return new ResponseEntity("User details updated successfully", HttpStatus.OK);
-        }else {
+        } else {
             return new ResponseEntity("You are not authorized to edit this profile", HttpStatus.UNAUTHORIZED);
         }
     }
@@ -115,13 +165,14 @@ public class UserServiceImpl implements UserService {
         System.out.println(jwtToken.getIdFromToken(token));
         Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
 
-        if(authenticatedId == id){
+        if (authenticatedId == id) {
             User user = userRepository.findById(authenticatedId).get();
             //check if empty later
             user.setAboutMe(aboutMe);
             userRepository.save(user);
             return new ResponseEntity("About me Updated", HttpStatus.OK);
-        }else{
+
+        } else {
             return new ResponseEntity("You are not authorized to edit this aboutMe", HttpStatus.UNAUTHORIZED);
         }
     }
@@ -166,5 +217,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByEmail(String username) {
         return Optional.ofNullable(userRepository.findByEmail(username));
+    }
+
+    // FOR TESTING CODES
+    // get users
+    public ResponseEntity getUsersTest() {
+        return new ResponseEntity(userRepository.findAll(), HttpStatus.OK);
+    }
+
+    // get user
+    public ResponseEntity getUserTest(Long id) {
+        User user = userRepository.findById(id).get();
+        return new ResponseEntity(user, HttpStatus.OK);
     }
 }

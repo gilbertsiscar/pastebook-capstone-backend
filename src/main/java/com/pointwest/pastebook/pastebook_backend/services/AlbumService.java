@@ -3,19 +3,22 @@ package com.pointwest.pastebook.pastebook_backend.services;
 import com.pointwest.pastebook.pastebook_backend.models.Album;
 import org.springframework.http.ResponseEntity;
 
+import java.util.HashMap;
+
 public interface AlbumService {
 
     // create album
-    ResponseEntity createAlbum(Album album);
+    ResponseEntity createAlbum(HashMap<String, Object> albumMap);
+
 
     // rename album
-    ResponseEntity renameAlbum(Album album, Long id);
+    ResponseEntity renameAlbum(HashMap<String, Object> albumMap, Long albumId);
 
     // delete album
-    ResponseEntity deleteAlbum(Long id);
+    ResponseEntity deleteAlbum(Long albumId);
 
-    // add album
-    ResponseEntity addAlbum(Album album, Long userId);
+//    // add album
+//    ResponseEntity addAlbum(Album album, Long userId);
 
     // get photos from a particular album
     ResponseEntity getAlbumsFromUser(Long userId);

@@ -8,9 +8,10 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Object> {
+public interface UserRepository extends CrudRepository<User, Object> {
     @Query(value = "SELECT * FROM user WHERE profile_url = ?1",
             nativeQuery = true)
     User getUserProfileByUrl(String profileUrl);
     User findByEmail(String email);
 }
+

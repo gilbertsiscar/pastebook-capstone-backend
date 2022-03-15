@@ -145,5 +145,16 @@ public class UserController {
 //        return userService.getUser(userid);
 //    }
 
+    // FOR TESTING CODES
+    // get users
+    @RequestMapping(value="/users/test", method = RequestMethod.GET)
+    public ResponseEntity<Object> getUsersTest() {
+        return userService.getUsersTest();
+    }
 
+    // get user
+    @RequestMapping(value="/users/{userid}/test", method = RequestMethod.GET)
+    public ResponseEntity<Object> getUserTest(@PathVariable Long userid) {
+        return userService.getUserTest(userid);
+    }
 }

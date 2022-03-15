@@ -13,42 +13,42 @@ import java.util.Optional;
 @Service
 public class PostServiceImpl implements PostService {
 
-  @Autowired private PostRepository postRepository;
+    @Autowired private PostRepository postRepository;
 
-  @Autowired private UserRepository userRepository;
+    @Autowired private UserRepository userRepository;
 
-  @Autowired private JwtToken jwtToken;
+    @Autowired private JwtToken jwtToken;
 
-  @Override
-  public Post createPost(Post post, String token) {
-    Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
-    User user = userRepository.findById(authenticatedId).get();
+    @Override
+    public Post createPost(Post post, String token) {
+        Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
+        User user = userRepository.findById(authenticatedId).get();
 
-    post.setUser(user);
+        post.setUser(user);
 
-    return postRepository.save(post);
-  }
-
-  @Override
-  public Post getPostById(Long id) {
-    Optional<Post> post = postRepository.findById(id);
-
-    if (post.isPresent()) {
-      return post.get();
-    } else {
-      throw new RuntimeException("Error");
+        return postRepository.save(post);
     }
-  }
 
-  @Override
-  public Iterable<Post> getPostsFromUser(String stringToken) {
-    User user = userRepository.findByEmail(jwtToken.getUsernameFromToken(stringToken));
+    @Override
+    public Post getPostById(Long id) {
+        Optional<Post> post = postRepository.findById(id);
 
-    return user.getPosts();
-  }
+        if (post.isPresent()) {
+            return post.get();
+        } else {
+            throw new RuntimeException("Error");
+        }
+    }
 
-  @Override
-  public Iterable<Post> getAllPost() {
-    return this.postRepository.findAll();
-  }
+    @Override
+    public Iterable<Post> getPostsFromUser(String stringToken) {
+        User user = userRepository.findByEmail(jwtToken.getUsernameFromToken(stringToken));
+
+        return user.getPosts();
+    }
+
+    @Override
+    public Iterable<Post> getAllPost() {
+        return this.postRepository.findAll();
+    }
 }

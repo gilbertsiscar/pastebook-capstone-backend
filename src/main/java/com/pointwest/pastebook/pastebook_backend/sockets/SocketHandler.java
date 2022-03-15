@@ -68,7 +68,7 @@ public class SocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         // do something on connection closed
         sessions.remove(session);
-    } 
+    }
 
     @Override
     protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) {

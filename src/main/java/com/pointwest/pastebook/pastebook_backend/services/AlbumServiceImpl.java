@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 @Service
 public class AlbumServiceImpl implements AlbumService{
@@ -23,10 +24,18 @@ public class AlbumServiceImpl implements AlbumService{
     private UserRepository userRepository;
 
     // create album
-    public ResponseEntity createAlbum(Album album) {
+    public ResponseEntity createAlbum(HashMap<String, Object> albumMap) {
+
+        String albumName = albumMap.get("albumName").toString();
+        String userIdStr = albumMap.get("userId").toString();
+
+        Long userId = Long.parseLong(userIdStr);
+
+        User albumOwner = userRepository.findById(userId).get();
         Album newAlbum = new Album();
 
-        newAlbum.setAlbumName(album.getAlbumName());
+        newAlbum.setAlbumName(albumName);
+        newAlbum.setUser(albumOwner);
 
         // getting 'Date' object and converting it to string
         LocalDateTime dateObject = LocalDateTime.now();
@@ -35,24 +44,28 @@ public class AlbumServiceImpl implements AlbumService{
 
         newAlbum.setDatetimeCreated(formattedDate);
 
-        albumRepository.save(album);
+        albumRepository.save(newAlbum);
 
         return new ResponseEntity("Album created successfully!", HttpStatus.CREATED);
     }
 
     // rename album
-    public ResponseEntity renameAlbum(Album album, Long id) {
-        Album albumToUpdate = albumRepository.findById(id).get();
+    public ResponseEntity renameAlbum(HashMap<String, Object> albumMap, Long albumId) {
 
-        albumToUpdate.setAlbumName(album.getAlbumName());
+        String newAlbumName = albumMap.get("albumName").toString();
+
+        Album albumToUpdate = albumRepository.findById(albumId).get();
+
+        albumToUpdate.setAlbumName(newAlbumName);
+
         albumRepository.save(albumToUpdate);
 
         return new ResponseEntity("Album renamed successfully!", HttpStatus.OK);
     }
 
     // delete album
-    public ResponseEntity deleteAlbum(Long id) {
-        albumRepository.deleteById(id);
+    public ResponseEntity deleteAlbum(Long albumId) {
+        albumRepository.deleteById(albumId);
         return new ResponseEntity("Album deleted successfully!", HttpStatus.OK);
     }
 
