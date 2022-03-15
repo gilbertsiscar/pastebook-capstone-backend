@@ -1,6 +1,7 @@
 package com.pointwest.pastebook.pastebook_backend.services;
 
 import com.pointwest.pastebook.pastebook_backend.config.JwtToken;
+import com.pointwest.pastebook.pastebook_backend.exceptions.EntityDuplicateException;
 import com.pointwest.pastebook.pastebook_backend.models.User;
 import com.pointwest.pastebook.pastebook_backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +26,14 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JwtToken jwtToken;
 
-    // create user
-    public ResponseEntity createUser(User user) {
-
-        userRepository.save(user);
-        //Need to save to set an id
-
+    public User createUser(User user) {
+        Optional<User> userDb = Optional.ofNullable(userRepository.findByEmail(user.getEmail()));
+        if (userDb.isPresent()) {
+            throw new EntityDuplicateException(User.class, "email", user.getEmail());
+        }
         //When verified, change status to verify and set profileUrl
         prodVerify(user);
-        return new ResponseEntity("User created successfully!", HttpStatus.CREATED);
+        return userRepository.save(user);
     }
 
     private void prodVerify(User user){
