@@ -1,15 +1,18 @@
 package com.pointwest.pastebook.pastebook_backend.services;
 
 import com.pointwest.pastebook.pastebook_backend.models.Post;
+import com.pointwest.pastebook.pastebook_backend.models.User;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface LikedPostService {
-    ResponseEntity likePost(Long postId, String token);
-    ResponseEntity unlikePost(Long postId, String token);
+    void likePost(Long postId, String token);
 
-    Iterable<Post> getLikesFromAPost(Long postId, String stringToken);
+    Integer getLikes(Long postId);
+
+    void unlikePost(Long postId, String token);
+
     //Iterable<Post> getTaggedPosts(String stringToken);
     //Iterable<Post> getAllPostRelatedToUser(Long userId, String stringToken);
 

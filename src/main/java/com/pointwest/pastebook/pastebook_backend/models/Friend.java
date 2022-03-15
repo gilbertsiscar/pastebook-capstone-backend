@@ -13,8 +13,8 @@ public class Friend {
     private Long id;
 
     @Column
-    private boolean isActive;
-
+    private boolean isActive = true;
+  
     @Column
     private String datetimeCreated;
 

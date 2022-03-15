@@ -1,13 +1,16 @@
 package com.pointwest.pastebook.pastebook_backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name="user")
+@Table(name="users")
 public class User {
 
     // Properties
@@ -50,31 +53,48 @@ public class User {
     @Column
     private String aboutMe;
 
-    public Set<Post> getPosts() {
-        return posts;
-    }
+    @Column
+    private String verificationCode;
 
-    public void setPosts(Set<Post> posts) {
-        this.posts = posts;
-    }
+    private boolean enabled;
 
-    public Set<Post> getTaggedpost() {
-        return taggedpost;
-    }
-
-    public void setTaggedpost(Set<Post> taggedpost) {
-        this.taggedpost = taggedpost;
-    }
+//    public Set<Post> getTaggedpost() {
+//        return taggedpost;
+//    }
+//
+//    public void setTaggedpost(Set<Post> taggedpost) {
+//        this.taggedpost = taggedpost;
+//    }
 
     @Column
     private String profileUrl;
 
+
     // NOTE: this particular block of code is important
     // OneToMany relationship between User Model and Post Model
-    @OneToMany(mappedBy = "postOwner")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
     @JsonIgnore
-    private Set<Post> posts;
+    private List<Post> posts = new ArrayList<>();
 
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
+    }
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<LikedPost> likedPost = new ArrayList<>();
+
+    public List<LikedPost> getLikedPost() {
+        return likedPost;
+    }
+
+    public void setLikedPost(List<LikedPost> likedPost) {
+        this.likedPost = likedPost;
+    }
 
     //Tagged posts
 //    @ManyToOne
@@ -82,9 +102,9 @@ public class User {
 //    @JoinColumn(name="post_id", nullable=false)
 //    private Post post;
 
-    @ManyToMany(mappedBy = "taggedUsers")
-    @JsonIgnore
-    private Set<Post> taggedpost = new HashSet<>();
+//    @ManyToMany(mappedBy = "taggedUsers")
+//    @JsonIgnore
+//    private Set<Post> taggedpost = new HashSet<>();
 
     // OneToMany relationship between User Model and Album Model
     @OneToMany(mappedBy = "user")
@@ -229,5 +249,22 @@ public class User {
     public void setComments(Set<Comment> comments) {
         this.comments = comments;
     }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
 
 }
