@@ -12,43 +12,41 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class LikedPostImpl implements LikedPostService {
     @Autowired
-    PostRepository postRepository;
+    private PostRepository postRepository;
 
     @Autowired
-    LikedPostRepository likedPostRepository;
+    private LikedPostRepository likedPostRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    JwtToken jwtToken;
+    private JwtToken jwtToken;
+
     @Override
-    public ResponseEntity likePost(Long postId, String token) {
+    public void likePost(Long postId, String token) {
         Optional<Post> postToLike = postRepository.findById(postId);
+        Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
+        User user = userRepository.findById(authenticatedId).get();
+
         if(postToLike.isPresent()){
             LikedPost commenceLike = new LikedPost();
             commenceLike.setPost(postToLike.get());
-            Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
-            User user = userRepository.findById(authenticatedId).get();
             commenceLike.setUser(user);
-            //commenceLike.setDatetimeCreated();
-
             postToLike.get().getLikes().add(commenceLike);
             postRepository.save(postToLike.get());
             likedPostRepository.save(commenceLike);
-            return new ResponseEntity("Liked post", HttpStatus.OK);
-        }else{
-            return new ResponseEntity("Post not found!", HttpStatus.NOT_FOUND);
         }
     }
 
     @Override
-    public ResponseEntity unlikePost(Long postId, String token) {
+    public void unlikePost(Long postId, String token) {
         Optional<Post> postToUnLike = postRepository.findById(postId);
         if(postToUnLike.isPresent()){
             Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
@@ -59,14 +57,13 @@ public class LikedPostImpl implements LikedPostService {
             postToUnLike.get().getLikes().remove(unlike);
             postRepository.save(postToUnLike.get());
             likedPostRepository.delete(unlike);
-            return new ResponseEntity("Unliked post", HttpStatus.OK);
-        }else{
-            return new ResponseEntity("Post not found!", HttpStatus.NOT_FOUND);
         }
     }
 
     @Override
-    public Iterable<Post> getLikesFromAPost(Long postId, String stringToken) {
-        return null;
+    public Integer getLikes(Long postId) {
+        Post post = postRepository.findById(postId).get();
+        return post.getLikes().size();
     }
+
 }
