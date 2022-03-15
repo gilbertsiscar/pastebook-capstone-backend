@@ -6,8 +6,6 @@ import org.springframework.http.ResponseEntity;
 import java.util.Optional;
 
 public interface UserService {
-
-    // create user
     User createUser(User user);
 
     // update user
