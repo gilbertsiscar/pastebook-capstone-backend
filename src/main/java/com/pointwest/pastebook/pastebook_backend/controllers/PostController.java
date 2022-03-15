@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin
@@ -22,20 +23,23 @@ public class PostController {
   // POST /api/posts
   @PostMapping
   public ResponseEntity<Post> createPost(
-      @RequestParam("image") MultipartFile file,
-      @RequestParam("content") String content,
+      @RequestParam(value = "image", required = false) MultipartFile imageFile,
+      @RequestParam(value = "content", required = false) String content,
       @RequestHeader(value = "Authorization") String stringToken)
       throws IOException {
     Post post = new Post();
-    post.setContent(StringUtils.cleanPath(content));
 
-    if(!file.isEmpty()) {
-      Image img =
-              new Image(
-                      file.getOriginalFilename(),
-                      file.getContentType(),
-                      file.getBytes());
-      post.setImage(img);
+    if (!imageFile.isEmpty()) {
+      Image image =
+          new Image(
+              StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename())),
+              imageFile.getContentType(),
+              imageFile.getBytes());
+      post.setImage(image);
+    }
+
+    if (!content.isEmpty()) {
+      post.setContent(StringUtils.cleanPath(content));
     }
 
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
