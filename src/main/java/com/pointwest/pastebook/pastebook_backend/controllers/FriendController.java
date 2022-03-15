@@ -38,7 +38,4 @@ public class FriendController {
     public ResponseEntity<Object> getOneFriend(@PathVariable Long requesterId, @PathVariable Long recipientId) {
         return friendService.getOneFriend(requesterId, recipientId);
     }
-
-
-
 }
