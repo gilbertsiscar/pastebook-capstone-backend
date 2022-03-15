@@ -1,14 +1,15 @@
 package com.pointwest.pastebook.pastebook_backend.controllers;
 
+import com.pointwest.pastebook.pastebook_backend.models.Image;
 import com.pointwest.pastebook.pastebook_backend.models.Post;
-import com.pointwest.pastebook.pastebook_backend.models.PostRequest;
-import com.pointwest.pastebook.pastebook_backend.models.User;
 import com.pointwest.pastebook.pastebook_backend.services.PostService;
-import com.pointwest.pastebook.pastebook_backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -21,14 +22,25 @@ public class PostController {
   // POST /api/posts
   @PostMapping
   public ResponseEntity<Post> createPost(
-      @RequestBody PostRequest postRequest,
-      @RequestHeader(value = "Authorization") String stringToken) {
+      @RequestParam("image") MultipartFile file,
+      @RequestParam("content") String content,
+      @RequestHeader(value = "Authorization") String stringToken)
+      throws IOException {
     Post post = new Post();
+    post.setContent(StringUtils.cleanPath(content));
+
+    if(!file.isEmpty()) {
+      Image img =
+              new Image(
+                      file.getOriginalFilename(),
+                      file.getContentType(),
+                      file.getBytes());
+      post.setImage(img);
+    }
+
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     LocalDateTime now = LocalDateTime.now();
-
     post.setDatetimeCreated(dtf.format(now));
-    post.setContent(postRequest.getContent());
 
     return ResponseEntity.ok().body(postService.createPost(post, stringToken));
   }
@@ -50,5 +62,11 @@ public class PostController {
   @GetMapping
   public ResponseEntity<Iterable<Post>> getAllPosts() {
     return ResponseEntity.ok().body(postService.getAllPost());
+  }
+
+  @PostMapping("/upload")
+  public ResponseEntity<Object> upload(@RequestParam("image") MultipartFile file) {
+    System.out.println(file);
+    return ResponseEntity.ok().body("success");
   }
 }
