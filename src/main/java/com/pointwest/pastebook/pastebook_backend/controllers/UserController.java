@@ -132,10 +132,10 @@ public class UserController {
 
     //Not needed
     // get users
-//    @RequestMapping(value="/users", method = RequestMethod.GET)
-//    public ResponseEntity<Object> getUsers() {
-//        return userService.getUsers();
-//    }
+    @RequestMapping(value="/users", method = RequestMethod.GET)
+    public ResponseEntity<Object> getUsers() {
+        return userService.getUsers();
+    }
 //
 //    // get user
 //    @RequestMapping(value="/users/{userid}", method = RequestMethod.GET)

@@ -26,4 +26,10 @@ public interface UserService {
     ResponseEntity searchUser(String searchTerm, String token);
 
     Optional<User> findByEmail(String email);
+
+    // to be deleted
+    // get users
+    ResponseEntity getUsers();
+
+
 }
