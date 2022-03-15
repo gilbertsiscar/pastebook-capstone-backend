@@ -1,76 +1,54 @@
 package com.pointwest.pastebook.pastebook_backend.controllers;
 
-import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonArrayFormatVisitor;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.pointwest.pastebook.pastebook_backend.models.Post;
 import com.pointwest.pastebook.pastebook_backend.models.PostRequest;
 import com.pointwest.pastebook.pastebook_backend.models.User;
 import com.pointwest.pastebook.pastebook_backend.services.PostService;
 import com.pointwest.pastebook.pastebook_backend.services.UserService;
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.web.JsonPath;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value="/api")
+@RequestMapping(value = "/api/posts")
 public class PostController {
+    @Autowired private PostService postService;
 
-    @Autowired
-    private PostService postService;
-
-    @Autowired
-    private UserService userService;
-
-    // create post
-    @RequestMapping(value="/posts", method = RequestMethod.POST)
-    public ResponseEntity<Object> createPost(@RequestBody PostRequest postRequest
-            ,@RequestHeader (value = "Authorization") String stringToken) {
+    // POST /api/posts
+    @PostMapping
+    public ResponseEntity<Post> createPost(
+            @RequestBody PostRequest postRequest,
+            @RequestHeader(value = "Authorization") String stringToken) {
         Post post = new Post();
-//        {
-//            "title"
-//            "content"
-//            "date_created"
-//            "taggedusers"
-//        }
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+
+        post.setDatetimeCreated(dtf.format(now));
         post.setContent(postRequest.getContent());
-        //post.setDatetimeCreated(Date.valueOf(postRequest.getDate_created()));
-        //The backend creates the date instead
-        ArrayList<String> taggedIds = postRequest.getTaggedIds();
-        return postService.createPost(post, stringToken, taggedIds);
+
+        return ResponseEntity.ok().body(postService.createPost(post, stringToken));
     }
 
-    //Get all related post from a user, can be yours or others
-    @RequestMapping(value="/posts/{userId}", method = RequestMethod.GET)
-    public ResponseEntity<Object> getRelatedPostToUser(
-            @PathVariable Long userId,
-            @RequestHeader (value = "Authorization") String stringToken) {
-//        {
-//            "title"
-//            "content"
-//            "date_created"
-//            "receiverId"
-//        }
-//        post.setContent(postRequest.getContent());
-//        //post.setDatetimeCreated(Date.valueOf(postRequest.getDate_created()));
-//        ArrayList<String> taggedIds = postRequest.getTaggedIds();
-//        return postService.createPost(post, stringToken, taggedIds);
-        return new ResponseEntity<>(postService.getAllPostRelatedToUser(userId, stringToken), HttpStatus.OK);
+    // GET /api/posts/{id}
+    @GetMapping("/{postId}")
+    public ResponseEntity<Post> getPostById(@PathVariable Long postId) {
+        return ResponseEntity.ok().body(postService.getPostById(postId));
     }
 
-    // getting all posts of a particular user
-//    @RequestMapping(value="/posts/{visitorId}/{ownerId}", method = RequestMethod.GET)
-//    public ResponseEntity<Object> getPostsFromUser(@PathVariable Long visitorId, @PathVariable Long ownerId) {
-//        return postService.getPostsFromUser(visitorId, ownerId);
-//    }
+    // GET /api/posts/user
+    @GetMapping("/user")
+    public ResponseEntity<Iterable<Post>> getPostFromUser(
+            @RequestHeader(value = "Authorization") String token) {
+        return ResponseEntity.ok().body(postService.getPostsFromUser(token));
+    }
 
+    // GET /api/posts
+    @GetMapping
+    public ResponseEntity<Iterable<Post>> getAllPosts() {
+        return ResponseEntity.ok().body(postService.getAllPost());
+    }
 }

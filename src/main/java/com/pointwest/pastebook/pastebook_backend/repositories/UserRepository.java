@@ -2,6 +2,7 @@ package com.pointwest.pastebook.pastebook_backend.repositories;
 
 import com.pointwest.pastebook.pastebook_backend.models.LikedPost;
 import com.pointwest.pastebook.pastebook_backend.models.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -13,3 +14,4 @@ public interface UserRepository extends CrudRepository<User, Object> {
     User getUserProfileByUrl(String profileUrl);
     User findByEmail(String email);
 }
+

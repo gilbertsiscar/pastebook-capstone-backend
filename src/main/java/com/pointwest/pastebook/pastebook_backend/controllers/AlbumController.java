@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+
 @RestController
 @CrossOrigin
 public class AlbumController {
@@ -14,31 +16,31 @@ public class AlbumController {
     private AlbumService albumService;
 
     // create album
-    @RequestMapping(value="/albums", method = RequestMethod.POST)
-    public ResponseEntity<Object> createAlbum(@RequestBody Album album) {
-        return albumService.createAlbum(album);
+    @RequestMapping(value="/api/albums", method = RequestMethod.POST)
+    public ResponseEntity<Object> createAlbum(@RequestBody HashMap<String, Object> albumMap) {
+        return albumService.createAlbum(albumMap);
     }
 
     // rename album
-    @RequestMapping(value="/albums/{albumId}", method = RequestMethod.PUT)
-    public ResponseEntity<Object> renameAlbum(@RequestBody Album album, @PathVariable Long albumId) {
-        return albumService.renameAlbum(album, albumId);
+    @RequestMapping(value="/api/albums/{albumId}", method = RequestMethod.PUT)
+    public ResponseEntity<Object> renameAlbum(@RequestBody HashMap<String, Object> albumMap, @PathVariable Long albumId) {
+        return albumService.renameAlbum(albumMap, albumId);
     }
 
     // delete album
-    @RequestMapping(value="/albums/{albumId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Object> renameAlbum(@PathVariable Long albumId) {
+    @RequestMapping(value="/api/albums/{albumId}", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteAlbum(@PathVariable Long albumId) {
         return albumService.deleteAlbum(albumId);
     }
 
-    // add album
-    @RequestMapping(value="/albums/{userId}", method = RequestMethod.POST)
-    public ResponseEntity<Object> addAlbum(@RequestBody Album album, @PathVariable Long userId) {
-        return albumService.addAlbum(album, userId);
-    }
+//    // add album
+//    @RequestMapping(value="/albums/{userId}", method = RequestMethod.POST)
+//    public ResponseEntity<Object> addAlbum(@RequestBody Album album, @PathVariable Long userId) {
+//        return albumService.addAlbum(album, userId);
+//    }
 
-    // get photos from a particular album
-    @RequestMapping(value="/albums/{userId}", method = RequestMethod.GET)
+    // get albums from a particular user
+    @RequestMapping(value="/api/albums/{userId}", method = RequestMethod.GET)
     public ResponseEntity<Object> getAlbumsFromUser(@PathVariable Long userId) {
         return albumService.getAlbumsFromUser(userId);
     }

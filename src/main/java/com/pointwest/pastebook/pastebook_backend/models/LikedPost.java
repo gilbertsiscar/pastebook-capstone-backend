@@ -1,11 +1,13 @@
 package com.pointwest.pastebook.pastebook_backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name="liked_posts")
+@Table(name = "liked_posts")
 public class LikedPost {
 
     // Properties
@@ -14,26 +16,19 @@ public class LikedPost {
     @SequenceGenerator(name = "liked_posts_seq", sequenceName = "sequence_liked_posts", allocationSize = 1)
     private Long id;
 
-    @Column
-    private String datetimeCreated;
-
     // This refers to the user who 'likes' the post
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
     @JsonIgnore
-    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     // Constructors
-    public LikedPost() {
-    }
-
-    public LikedPost(String datetimeCreated) {
-        this.datetimeCreated = datetimeCreated;
-    }
+    public LikedPost() {}
 
     // Getters and Setters
     public Long getId() {
@@ -42,14 +37,6 @@ public class LikedPost {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getDatetimeCreated() {
-        return datetimeCreated;
-    }
-
-    public void setDatetimeCreated(String datetimeCreated) {
-        this.datetimeCreated = datetimeCreated;
     }
 
     public User getUser() {
@@ -67,5 +54,4 @@ public class LikedPost {
     public void setPost(Post post) {
         this.post = post;
     }
-
 }

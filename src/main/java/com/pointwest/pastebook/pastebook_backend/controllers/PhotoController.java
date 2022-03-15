@@ -58,13 +58,9 @@ public class PhotoController {
 
     // CODES FOR THYMELEAF TESTING
 
-    @GetMapping("/")
-    public String UploadPage(Model model) {
-        Photo photo = new Photo();
-        Album album = new Album();
-        model.addAttribute("photo", photo);
-        model.addAttribute("album", album);
-        return "home";
+    @GetMapping("/api/test")
+    public String test(Model model) {
+        return "result";
     }
 
     @PostMapping("/tl/photos")
@@ -75,8 +71,8 @@ public class PhotoController {
         // create a new photo to be associated with the created album by using the setAlbum() method
         Photo newPhoto = new Photo();
 
-        newPhoto.setTitle(photo.getTitle());
-        newPhoto.setContent(photo.getContent());
+//        newPhoto.setTitle(photo.getTitle());
+//        newPhoto.setContent(photo.getContent());
         newPhoto.setAlbum(album);
 
         // first save is here, just to get the photo Id for the codes below
@@ -111,7 +107,7 @@ public class PhotoController {
     }
 
     // displaying photos from an album with id: albumId
-    @GetMapping("/tl/display/albums")
+    @GetMapping("/api/tl/display/albums")
     public String displayGetPhotosFromAlbum(@RequestParam("userId") Long userId, Model model) {
         // first, create an Array List
         ArrayList<Long> albumArrId = new ArrayList<>();
@@ -165,5 +161,6 @@ public class PhotoController {
         return "displayPhotos";
 
     }
+
 
 }

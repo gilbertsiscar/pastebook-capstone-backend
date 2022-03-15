@@ -7,18 +7,34 @@ import java.util.ArrayList;
 
 public interface PostService {
 
-    //
-    // creating a post
-    ResponseEntity createPost(Post post, String token, ArrayList<String> taggedIds);
+    Post createPost(Post post, String token);
+
+    Post getPostById(Long id);
 
     Iterable<Post> getPostsFromUser(String stringToken);
-    Iterable<Post> getTaggedPosts(String stringToken);
-    Iterable<Post> getAllPostRelatedToUser(Long userId, String stringToken);
 
+    Iterable<Post> getAllPost();
 
-
-    // getting all posts of a particular user
-    //ResponseEntity getPostsFromUser(Long visitorId, Long ownerId);
-
-    //ResponseEntity getPostsRelatedToUser(String token);
+    //
+    // creating a post
+//    ResponseEntity createPost(Post post, String token, ArrayList<String> taggedIds);
+//
+//    Iterable<Post> getPostsFromUser(String stringToken);
+//    Iterable<Post> getTaggedPosts(String stringToken);
+//    Iterable<Post> getAllPostRelatedToUser(Long userId, String stringToken);
+//
+//
+//
+//    // getting all posts of a particular user
+//    //ResponseEntity getPostsFromUser(Long visitorId, Long ownerId);
+//
+//    //ResponseEntity getPostsRelatedToUser(String token);
+// //Post createPost(Post post, String token);
+//
+//  Post getPostById(Long id);
+//
+//  //Iterable<Post> getPostsFromUser(String stringToken);
+//
+//  Iterable<Post> getAllPost();
 }
+

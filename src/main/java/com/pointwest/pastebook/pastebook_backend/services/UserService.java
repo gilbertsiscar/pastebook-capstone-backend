@@ -27,9 +27,13 @@ public interface UserService {
 
     Optional<User> findByEmail(String email);
 
-    // to be deleted
-    // get users
-    ResponseEntity getUsers();
+
+    // CODES FOR TESTING
+    ResponseEntity getUsersTest();
+
+    // get user
+    ResponseEntity getUserTest(Long id);
+
 
 
 }
