@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
 
 @Service
 public class FriendRequestServiceImpl implements FriendRequestService {
@@ -26,15 +28,34 @@ public class FriendRequestServiceImpl implements FriendRequestService {
 
     @Autowired
     private FriendRepository friendRepository;
-//
+
     // send friend request
-    public ResponseEntity sendFriendRequest(Long senderId, Long receiverId) {
-        // Case 1: NOT POSSIBLE FOR A USER TO SEND A FRIEND REQUEST TO HIMSELF
-        if (senderId == receiverId) {
-            return new ResponseEntity("You can't send a friend request to yourself!", HttpStatus.CONFLICT);
+    public ResponseEntity sendFriendRequest(HashMap<String, Object> friendRequestMap)  {
+
+        String senderIdStr = friendRequestMap.get("senderId").toString();
+        String receiverIdStr = friendRequestMap.get("receiverId").toString();
+
+        Long senderId = Long.parseLong(senderIdStr);
+        Long receiverId = Long.parseLong(receiverIdStr);
+
+//        //FOR THE FRIEND REQUEST, NOTE: CAN'T SEND ANOTHER FRIEND REQUEST TO THE SAME PERSON IF THE REQUEST IS STILL EXISTING
+//        for (FriendRequest friendRequest : friendRequestRepository.findAll()) {
+//            if ((friendRequest.getSender().getId() == senderId && friendRequest.getReceiver().getId() == receiverId) || friendRequest.getSender().getId() == receiverId && friendRequest.getReceiver().getId() == senderId ) {
+//                return new ResponseEntity("You're already friends!", HttpStatus.CONFLICT);
+//            }
+//        }
+
+
+        // loop through every record in the friends table and if the friend.getRequester.getId() == senderId &&
+        // friend.getRecipient.getId() == receiverId => print "You're already friends!"
+        for (Friend friend : friendRepository.findAll()) {
+            if ((friend.getRequester().getId() == senderId && friend.getRecipient().getId() == receiverId) || friend.getRequester().getId() == receiverId && friend.getRecipient().getId() == senderId ) {
+                return new ResponseEntity("You're already friends!", HttpStatus.CONFLICT);
+
+            }
         }
 
-        // Case 2: ALREADY FRIENDS CAN'T SEND FRIEND REQUEST ANYMORE TO EACH OTHER! (USE CONDITIONAL STATEMENT)
+        //FOR THE FRIEND REQUEST, NOTE: ALREADY FRIENDS CAN'T SEND FRIEND REQUEST ANYMORE TO EACH OTHER! (USE CONDITIONAL STATEMENT)
 
         // loop through every record in the friends table and if the friend.getRequester.getId() == senderId &&
         // friend.getRecipient.getId() == receiverId => print "You're already friends!"
@@ -65,10 +86,10 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         String formattedDate = dateObject.format(formatDateObj);
 
         // creating a record in the friend_requests table where the record contains the senderId and the receiverId
-        FriendRequest friendRequest = new FriendRequest(true, formattedDate, sender, receiver);
+        FriendRequest newFriendRequest = new FriendRequest(true, formattedDate, sender, receiver);
 
         // save the friendRequest
-        friendRequestRepository.save(friendRequest);
+        friendRequestRepository.save(newFriendRequest);
 
         return new ResponseEntity("Friend request sent to " + receiver.getFirstName(), HttpStatus.CREATED);
     }
@@ -91,6 +112,37 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         return new ResponseEntity(friendRequester, HttpStatus.OK);
     }
 
+//    public ResponseEntity cancelFriendRequest(HashMap<String, Object> friendRequestMap) {
+//        // by cancelling the friend request, we are removing the particular record in the friend_requests table
+//
+//        String senderIdStr = friendRequestMap.get("senderId").toString();
+//        String receiverIdStr = friendRequestMap.get("receiverId").toString();
+//
+//        Long senderId = Long.parseLong(senderIdStr);
+//        Long receiverId = Long.parseLong(receiverIdStr);
+//
+//        for (FriendRequest friendRequest : friendRequestRepository.findAll()) {
+//            if (friendRequest.getSender().getId() == senderId && friendRequest.getReceiver().getId() == receiverId) {
+//                friendRequestRepository.deleteById(friendRequest.getId());
+//                return new ResponseEntity("Friend request deleted", HttpStatus.OK);
+//            }
+//        }
+//        return new ResponseEntity("Exception message", HttpStatus.OK);
+//    }
+
+    // get one friend request
+    public ResponseEntity getOneFriendRequest(Long senderId, Long receiverId) {
+        for (FriendRequest friendRequest : friendRequestRepository.findAll()) {
+            if (senderId == friendRequest.getSender().getId() && receiverId == friendRequest.getReceiver().getId()) {
+                Optional<FriendRequest> optionalFriendRequest = Optional.of(friendRequest);
+                return new ResponseEntity(optionalFriendRequest, HttpStatus.OK);
+            }
+        }
+        Optional<FriendRequest> noFriendRequest = Optional.of(new FriendRequest());
+        return new ResponseEntity(noFriendRequest, HttpStatus.OK);
+    }
+
+    // delete one friend request
     public ResponseEntity cancelFriendRequest(Long senderId, Long receiverId) {
         // by cancelling the friend request, we are removing the particular record in the friend_requests table
 
@@ -102,4 +154,5 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         }
         return new ResponseEntity("Exception message", HttpStatus.OK);
     }
+
 }
