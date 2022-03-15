@@ -3,6 +3,7 @@ package com.pointwest.pastebook.pastebook_backend.controllers;
 import com.pointwest.pastebook.pastebook_backend.exceptions.UserException;
 import com.pointwest.pastebook.pastebook_backend.models.JwtRequest;
 import com.pointwest.pastebook.pastebook_backend.models.User;
+import com.pointwest.pastebook.pastebook_backend.models.dto.UserDto;
 import com.pointwest.pastebook.pastebook_backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
+import java.util.Optional;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,45 +37,34 @@ public class UserController {
     public ResponseEntity<Object> testConnection(){
         return  new ResponseEntity<Object>("Connection alright!", HttpStatus.OK);
     }
-    // create user
-    @RequestMapping(value="/users/register", method = RequestMethod.POST)
-    public ResponseEntity<Object> createUser(@RequestBody Map<String, String> body)  throws UserException {
-        // do checker for email
-        System.out.println("test");
-        if(!userService.findByEmail(body.get("email")).isEmpty()){
-            //throw new UserException("Username already exists");
-            return new ResponseEntity<Object>("Email already exists", HttpStatus.IM_USED);
-        }else{
-            String password = body.get("password");
-            String encodedPassword = new BCryptPasswordEncoder().encode(password);
 
-            User user = new User();
-            user.setFirstName(body.get("firstName"));
-            user.setLastName(body.get("lastName"));
-            user.setBirthday(body.get("birthday"));
-            user.setEmail(body.get("email"));
-            user.setMobileNumber(body.get("mobilenumber"));
-            user.setPassword(encodedPassword);
-            user.setGender(body.get("gender"));
-            // default values
-            user.setOnline(false);
-            user.setEnabled(false);
+    @PostMapping("/users/register")
+    public ResponseEntity<User> createUser(@RequestBody UserDto userDto)   {
+        User user = new User();
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setBirthday(userDto.getBirthday());
+        user.setEmail(userDto.getEmail());
+        user.setMobileNumber(userDto.getMobileNumber());
+        user.setGender(userDto.getGender());
+        // default values
+        user.setOnline(false);
+        user.setEnabled(false);
 
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-            LocalDateTime now = LocalDateTime.now();
+        String password = userDto.getPassword();
+        String encodedPassword = new BCryptPasswordEncoder().encode(password);
+        user.setPassword(encodedPassword);
 
-            user.setDatetimeCreated(dtf.format(now));
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        user.setDatetimeCreated(dtf.format(now));
 
-            user.setAboutMe("");
-            user.setProfileUrl("");
-            user.setProfilePic("");
+        user.setAboutMe("");
+        user.setProfileUrl("");
+        user.setProfilePic("");
 
-            URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/users/register").toUriString());
-
-            return ResponseEntity.created(uri).body(userService.createUser(user));
-
-        }
-
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/users/register").toUriString());
+        return ResponseEntity.created(uri).body(userService.createUser(user));
     }
 
     @RequestMapping(value="/users/details/{userid}", method = RequestMethod.GET)

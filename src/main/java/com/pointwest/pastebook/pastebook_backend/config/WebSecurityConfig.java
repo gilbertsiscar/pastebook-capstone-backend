@@ -81,7 +81,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/comment/{postId}").permitAll()
                 .antMatchers("/onlineconnection").permitAll()
 
-
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                 .anyRequest().authenticated().and().exceptionHandling()

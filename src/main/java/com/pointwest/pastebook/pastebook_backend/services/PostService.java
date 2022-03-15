@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import java.util.ArrayList;
 
 public interface PostService {
-
     Post createPost(Post post, String token);
 
     Post getPostById(Long id);

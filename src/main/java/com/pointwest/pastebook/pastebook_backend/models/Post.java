@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
-
+//
 @Entity
 @Table(name = "post")
 public class Post {

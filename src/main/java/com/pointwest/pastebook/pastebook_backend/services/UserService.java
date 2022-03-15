@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface UserService {
 
     // create user
-    ResponseEntity createUser(User user);
+    User createUser(User user);
 
     // update user
     ResponseEntity updateUserCredentials(User user, Long id, String token);
