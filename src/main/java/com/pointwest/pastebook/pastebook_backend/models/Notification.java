@@ -1,6 +1,10 @@
 package com.pointwest.pastebook.pastebook_backend.models;
 
+import com.pointwest.pastebook.pastebook_backend.models.Post;
+import com.pointwest.pastebook.pastebook_backend.models.User;
+
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name="notifications")
@@ -16,40 +20,40 @@ public class Notification {
     private String content;
 
     @Column
-    private String status;
+    private boolean readStatus;
 
     @OneToOne
     @JoinColumn(name = "post_id", referencedColumnName = "id")
     private Post post;
 
     @Column
-    private String datetimeCreated;
+    private Timestamp datetimeCreated;
 
     @OneToOne
     @JoinColumn(name = "sender_id", referencedColumnName = "id")
     private User sender;
 
-    @OneToOne
-    @JoinColumn(name = "receiver_id", referencedColumnName = "id")
-    private User receiver;
+    //For json respond reference
 
     // Constructors
     public Notification() {
     }
 
-    public Notification(String content, String status, String datetimeCreated) {
-        this.content = content;
-        this.status = status;
-        this.datetimeCreated = datetimeCreated;
-    }
-
-    // Getters and Setters
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Notification(Long id, String content, boolean readStatus, Post post, Timestamp datetimeCreated, User sender) {
+        this.id = id;
+        this.content = content;
+        this.readStatus = readStatus;
+        this.post = post;
+        this.datetimeCreated = datetimeCreated;
+        this.sender = sender;
     }
 
     public String getContent() {
@@ -60,19 +64,27 @@ public class Notification {
         this.content = content;
     }
 
-    public String getStatus() {
-        return status;
+    public boolean isReadStatus() {
+        return readStatus;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setReadStatus(boolean readStatus) {
+        this.readStatus = readStatus;
     }
 
-    public String getDatetimeCreated() {
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
+    public Timestamp getDatetimeCreated() {
         return datetimeCreated;
     }
 
-    public void setDatetimeCreated(String datetimeCreated) {
+    public void setDatetimeCreated(Timestamp datetimeCreated) {
         this.datetimeCreated = datetimeCreated;
     }
 
@@ -83,13 +95,4 @@ public class Notification {
     public void setSender(User sender) {
         this.sender = sender;
     }
-
-    public User getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
-    }
-
 }

@@ -58,10 +58,10 @@ public class PhotoController {
 
     // CODES FOR THYMELEAF TESTING
 
-    @GetMapping("/api/test")
-    public String test(Model model) {
-        return "result";
-    }
+//    @GetMapping("/api/test")
+//    public String test(Model model) {
+//        return "result";
+//    }
 
     @PostMapping("/tl/photos")
     public String createPhotoTl(Photo photo, @RequestParam("albumId") Long albumId, @RequestParam("image") MultipartFile multipartFile, Model model) throws IOException {
