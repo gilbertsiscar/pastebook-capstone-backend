@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
@@ -28,10 +28,6 @@ public class PostController {
       @RequestHeader(value = "Authorization") String stringToken)
       throws IOException {
     Post post = new Post();
-    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-    LocalDateTime now = LocalDateTime.now();
-    post.setDatetimeCreated(dtf.format(now));
-
     if (imageFile != null) {
       Image image =
           new Image(
@@ -63,7 +59,40 @@ public class PostController {
 
   // GET /api/posts
   @GetMapping
-  public ResponseEntity<Iterable<Post>> getAllPosts() {
+  public ResponseEntity<Iterable<Post>> getPosts() {
     return ResponseEntity.ok().body(postService.getAllPost());
+  }
+
+  // UPDATE /api/posts/id
+  @PutMapping("/{postId}")
+  public ResponseEntity<Post> updatePosts(
+      @PathVariable Long postId,
+      @RequestParam(value = "image", required = false) MultipartFile imageFile,
+      @RequestParam(value = "content") String content) throws IOException {
+    Post post = new Post();
+    if (imageFile != null) {
+      Image image =
+              new Image(
+                      StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename())),
+                      imageFile.getContentType(),
+                      imageFile.getBytes());
+      post.setImage(image);
+    }
+
+    if (content != null) {
+      post.setContent(StringUtils.cleanPath(content));
+    }
+
+    return ResponseEntity.ok().body(postService.updatePost(postId, post));
+  }
+
+  // DELETE /api/posts
+  @DeleteMapping("/{postId}")
+  public ResponseEntity<Map<String, String>> deletePost(@PathVariable Long postId) {
+    postService.deletePost(postId);
+    Map<String, String> response = new HashMap<>();
+    response.put("id", postId.toString());
+    response.put("deleted", "true");
+    return ResponseEntity.ok().body(response);
   }
 }
