@@ -36,10 +36,17 @@ public class UserServiceImpl implements UserService {
     }
 
     private User prodVerify(User user) {
+        Long id = userRepository.save(user).getId();
         user.setEnabled(true);
-        user.setProfileUrl(user.getFirstName() + user.getLastName() + user.getId());
-        return user;
+        user.setProfileUrl(user.getFirstName() + user.getLastName() + id);
+        return userRepository.save(user);
     }
+
+//    private User prodVerify(User user) {
+//        user.setEnabled(true);
+//        user.setProfileUrl(user.getFirstName() + user.getLastName() + user.getId());
+//        return user;
+//    }
 
 //    @Override
 //    public ResponseEntity updateUserCredentials(User user, Long id, String token) {
