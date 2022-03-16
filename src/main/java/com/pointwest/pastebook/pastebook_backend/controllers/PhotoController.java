@@ -58,12 +58,12 @@ public class PhotoController {
 
     // CODES FOR THYMELEAF TESTING
 
-    @GetMapping("/api/test")
+    @GetMapping("/api/tl/test")
     public String test(Model model) {
         return "result";
     }
 
-    @PostMapping("/tl/photos")
+    @PostMapping("/api/tl/photos")
     public String createPhotoTl(Photo photo, @RequestParam("albumId") Long albumId, @RequestParam("image") MultipartFile multipartFile, Model model) throws IOException {
         // associate an album with the corresponding id: albumId
         Album album = albumRepository.findById(albumId).get();
@@ -95,7 +95,7 @@ public class PhotoController {
     }
 
     // form/page for asking the user for an albumId input, where upon clicking the submit button, the user is directed to the list of images pertaining to the albumId inputted
-    @GetMapping("/tl/form/getUserId")
+    @GetMapping("/api/tl/form/getUserId")
     public String formGetAlbumId(Model model) {
         Photo photo = new Photo();
         Album album = new Album();
@@ -108,57 +108,20 @@ public class PhotoController {
 
     // displaying photos from an album with id: albumId
     @GetMapping("/api/tl/display/albums")
-    public String displayGetPhotosFromAlbum(@RequestParam("userId") Long userId, Model model) {
-        // first, create an Array List
-        ArrayList<Long> albumArrId = new ArrayList<>();
-        ArrayList<String> albumArrName = new ArrayList<>(); // additional code
+    public String displayGetPhotosFromAlbum(@RequestParam("albumId") Long albumId, Model model) {
 
-        // loop through every album with user_id = userId from the @RequestParam
-        for (Album album : albumRepository.findAll()) {
-            if (album.getUser().getId() == userId) {
-                albumArrId.add(album.getId());
-                albumArrName.add(album.getAlbumName()); // additional code
+        ArrayList<String> photoArrStr = new ArrayList<>();
+
+        // loop through every photo with album_id = albumId from the @RequestParam
+        for (Photo photo : photoRepository.findAll()) {
+            if (photo.getAlbum().getId() == albumId) {
+                photoArrStr.add("/user-photos/" + photo.getAlbum().getUser().getId() + "/" + photo.getAlbum().getId() + "/" + photo.getPhotoFileName());
             }
         }
 
-        // loop through every photo in each given album_id in the albumArr
+        model.addAttribute("photoArrStr", photoArrStr);
 
-        // create an Array List first
-        ArrayList<ArrayList<String>> nestedArr = new ArrayList<>();
-        HashMap<String, ArrayList<String>> nestedHashMap = new HashMap<>(); // additional code
-        // possible additional code:
-        // HashMap<String, HashMap<Photo, ArrayList<String>>> nestedHashMap = new HashMap<>();
-
-        // generating empty elements for nestedArr based on the number of albums belonging to user with id = userId
-        for (int i = 0; i < albumArrId.size(); i++) {
-            nestedArr.add(new ArrayList<>());
-        }
-
-        // generating empty elements for nestedHashMap based on the number of albums belonging to user with id = userId
-        for (int i = 0; i < albumArrId.size(); i++) {
-            nestedHashMap.put("", new ArrayList<>());
-        }
-
-        for (int i = 0; i < albumArrId.size(); i++) {
-            for (Photo photo : photoRepository.findAll()) {
-                if (photo.getAlbum().getId() == albumArrId.get(i)) {
-                    nestedArr.get(i).add("/user-photos/" + photo.getAlbum().getUser().getId() + "/" + photo.getAlbum().getId() + "/" + photo.getPhotoFileName());
-                }
-            }
-        }
-
-        // NEED A WAY TO ASSOCIATE ELEMENTS IN albumArrName WITH nestedArr ELEMENTS
-        for (int i = 0; i < nestedArr.size(); i++) {
-            nestedHashMap.put(albumArrName.get(i), nestedArr.get(i));
-        }
-
-        // adding nestedArr to the model to be able to use it in ThymeLeaf
-        model.addAttribute("nestedArr", nestedArr);
-        model.addAttribute("nestedHashMap", nestedHashMap);
-        model.addAttribute("albumArrName", albumArrName);
-        // nestedArr sample content: urlStringArr1, urlStringArr2, urlStringArr3, ...
-
-        return "displayPhotos";
+        return "displayImages";
 
     }
 
