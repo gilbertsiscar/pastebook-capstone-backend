@@ -219,6 +219,14 @@ public class UserServiceImpl implements UserService {
         return Optional.ofNullable(userRepository.findByEmail(username));
     }
 
+    @Override
+    public Optional<User> findByMobile(String mobile) {
+        System.out.println("Im in service :" + mobile);
+        System.out.println(userRepository.getUserDetailsByMobile(mobile));
+        System.out.println("test");
+        return userRepository.getUserDetailsByMobile(mobile);
+    }
+
     // FOR TESTING CODES
     // get users
     public ResponseEntity getUsersTest() {

@@ -38,7 +38,15 @@ public class AuthController {
     @RequestMapping(value = {"/api/users/login"}, method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
         HashMap<String, String> response = new HashMap<>();
-        authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
+
+        if(authenticationRequest.getMobile() != null){
+            User usermobile = userService.findByMobile(authenticationRequest.getMobile()).get();
+            System.out.println(usermobile.getPassword());
+            authenticationRequest.setEmail(usermobile.getEmail());
+            //authenticationRequest.setPassword(usermobile.getPassword());
+        }else{
+            authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
+        }
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(authenticationRequest.getEmail());
 
