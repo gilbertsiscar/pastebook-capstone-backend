@@ -7,6 +7,8 @@ import com.pointwest.pastebook.pastebook_backend.models.User;
 import com.pointwest.pastebook.pastebook_backend.repositories.PostRepository;
 import com.pointwest.pastebook.pastebook_backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -53,7 +55,12 @@ public class PostServiceImpl implements PostService {
 
   @Override
   public Iterable<Post> getAllPost() {
-    return this.postRepository.findAll();
+    return postRepository.findAll();
+  }
+
+  @Override
+  public Page<Post> getPostsPagination(Integer page, Integer size) {
+    return postRepository.findAll(PageRequest.of(page, size));
   }
 
   @Override
