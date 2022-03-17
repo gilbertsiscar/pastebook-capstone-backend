@@ -38,7 +38,19 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public ResponseEntity getAllMyNotification(Long user_id) {
+
         Iterable<Notification> notifications = notificationRepository.findAllOfMyNotification(user_id);
         return new ResponseEntity(notifications, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity seenNotifications(Notification[] notifications) {
+        for (Notification notification: notifications
+             ) {
+            Notification notifToUpdate = notificationRepository.findById(notification.getId()).get();
+            notifToUpdate.setReadStatus(true);
+            notificationRepository.save(notifToUpdate);
+        }
+        return new ResponseEntity("Notifications seen", HttpStatus.OK);
     }
 }

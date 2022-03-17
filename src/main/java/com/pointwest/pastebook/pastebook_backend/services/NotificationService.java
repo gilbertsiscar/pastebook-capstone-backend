@@ -10,4 +10,5 @@ import java.util.List;
 public interface NotificationService {
     List<NotifCardRequest> get5Notifications(Long user_id);
     ResponseEntity getAllMyNotification(Long user_id);
+    ResponseEntity seenNotifications(Notification[] notifications);
 }
