@@ -19,4 +19,11 @@ public interface NotificationRepository extends CrudRepository<Notification, Obj
             "LIMIT 5",
     nativeQuery = true)
     Iterable<Notification> get5Notifications (Long user_id);
+
+    @Query(value = "SELECT * FROM `notifications`\n" +
+            "INNER JOIN post ON post.id = notifications.post_id\n" +
+            "WHERE post.user_id = ?1\n" +
+            "ORDER BY notifications.datetime_created DESC\n",
+            nativeQuery = true)
+    Iterable<Notification> getAllNotifications (Long user_id);
 }

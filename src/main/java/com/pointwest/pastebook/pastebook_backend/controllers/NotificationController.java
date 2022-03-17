@@ -50,13 +50,13 @@ public class NotificationController {
     }
 
     @RequestMapping(value="/api/notifications/all", method = RequestMethod.GET)
-    public ResponseEntity<Object> getAllMyNotifications(@RequestHeader (value = "Authorization") String stringToken) {
+    public List<NotifCardRequest> getAllMyNotifications(@RequestHeader (value = "Authorization") String stringToken) {
 
         if(!stringToken.equals(null)) {
             String user_Id = jwtToken.getIdFromToken(stringToken);
             return notificationService.getAllMyNotification(Long.parseLong(user_Id));
         }
         //return friendService.acceptFriend(friendMap);
-        return new ResponseEntity<>("Error", HttpStatus.UNAUTHORIZED);
+        return null;
     }
 }

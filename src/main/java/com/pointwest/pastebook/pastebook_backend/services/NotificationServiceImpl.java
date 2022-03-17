@@ -37,10 +37,23 @@ public class NotificationServiceImpl implements NotificationService{
     }
 
     @Override
-    public ResponseEntity getAllMyNotification(Long user_id) {
+    public List<NotifCardRequest> getAllMyNotification(Long user_id) {
 
-        Iterable<Notification> notifications = notificationRepository.findAllOfMyNotification(user_id);
-        return new ResponseEntity(notifications, HttpStatus.OK);
+        List<NotifCardRequest> notifs = new ArrayList<>();
+        Iterable<Notification> notifications = notificationRepository.getAllNotifications(user_id);
+        Iterator<Notification> iter = notifications.iterator();
+
+        for(Notification notif: notifications){
+            NotifCardRequest card = new NotifCardRequest(
+                    notif.getId(),notif.getSender().getFirstName(),
+                    notif.getContent(),notif.getPost().getId(),
+                    notif.isReadStatus(),notif.getDatetimeCreated()
+            );
+            notifs.add(card);
+        }
+        return notifs;
+//        Iterable<Notification> notifications = notificationRepository.findAllOfMyNotification(user_id);
+//        return new ResponseEntity(notifications, HttpStatus.OK);
     }
 
     @Override
