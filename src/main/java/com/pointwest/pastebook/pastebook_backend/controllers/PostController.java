@@ -4,7 +4,6 @@ import com.pointwest.pastebook.pastebook_backend.models.Image;
 import com.pointwest.pastebook.pastebook_backend.models.Post;
 import com.pointwest.pastebook.pastebook_backend.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -21,28 +21,33 @@ import java.util.Objects;
 public class PostController {
   @Autowired private PostService postService;
 
-  // POST /api/posts
   @PostMapping
-  public ResponseEntity<Post> createPost(
-      @RequestParam(value = "image", required = false) MultipartFile imageFile,
+  public ResponseEntity<Object> createPost(
       @RequestParam(value = "content", required = false) String content,
-      @RequestHeader(value = "Authorization") String stringToken)
-      throws IOException {
+      @RequestParam(value = "tagged", required = false) List<Long> id,
+      @RequestPart(value = "image", required = false) MultipartFile imageFile,
+      @RequestHeader("Authorization") String token
+      ) throws IOException {
     Post post = new Post();
     if (imageFile != null) {
       Image image =
-          new Image(
-              StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename())),
-              imageFile.getContentType(),
-              imageFile.getBytes());
+              new Image(
+                      StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename())),
+                      imageFile.getContentType(),
+                      imageFile.getBytes());
       post.setImage(image);
     }
 
-    if (content != null) {
-      post.setContent(StringUtils.cleanPath(content));
+    if(content != null) {
+      post.setContent(content);
     }
 
-    return ResponseEntity.ok().body(postService.createPost(post, stringToken));
+    if(id != null) {
+      return ResponseEntity.ok().body(postService.createPost(post, token, id));
+    } else  {
+      return ResponseEntity.ok().body(postService.createPost(post, token));
+    }
+
   }
 
   // GET /api/posts/{id}
