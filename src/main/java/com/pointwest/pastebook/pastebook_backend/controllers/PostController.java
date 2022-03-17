@@ -2,10 +2,8 @@ package com.pointwest.pastebook.pastebook_backend.controllers;
 
 import com.pointwest.pastebook.pastebook_backend.models.Image;
 import com.pointwest.pastebook.pastebook_backend.models.Post;
-import com.pointwest.pastebook.pastebook_backend.models.dto.PostDto;
 import com.pointwest.pastebook.pastebook_backend.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
