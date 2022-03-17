@@ -64,13 +64,13 @@ public class User {
     @JsonIgnore
     private List<Tag> tags = new ArrayList<>();
 
-    public List<Tag> getTags() {
-      return tags;
-    }
-
-    public void setTags(List<Tag> tags) {
-      this.tags = tags;
-    }
+//    public List<Tag> getTags() {
+//      return tags;
+//    }
+//
+//    public void setTags(List<Tag> tags) {
+//      this.tags = tags;
+//    }
 
 
   //    @ManyToMany(mappedBy = "tagged")
