@@ -11,15 +11,11 @@ import com.pointwest.pastebook.pastebook_backend.repositories.PostRepository;
 import com.pointwest.pastebook.pastebook_backend.repositories.UserRepository;
 import com.pointwest.pastebook.pastebook_backend.sockets.SocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -44,7 +40,8 @@ public class LikedPostImpl implements LikedPostService {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     @Override
-    public void likePost(Long postId, String token) throws IOException {
+    public LikedPost likePost(Long postId, String token) throws IOException {
+
         Optional<Post> postToLike = postRepository.findById(postId);
         Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
         User user = userRepository.findById(authenticatedId).get();
@@ -55,7 +52,7 @@ public class LikedPostImpl implements LikedPostService {
             commenceLike.setUser(user);
             postToLike.get().getLikes().add(commenceLike);
             postRepository.save(postToLike.get());
-            likedPostRepository.save(commenceLike);
+           // likedPostRepository.save(commenceLike);
 
 
             //Add notifications
@@ -69,6 +66,9 @@ public class LikedPostImpl implements LikedPostService {
             notificationRepository.save(notification);
             // Notify User
             socketHandler.notifyUser(postToLike.get().getUser().getId());
+              return likedPostRepository.save(commenceLike);
+        } else {
+            throw new RuntimeException("error");
         }
 
 
