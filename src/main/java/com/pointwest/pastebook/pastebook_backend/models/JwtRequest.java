@@ -9,23 +9,18 @@ public class JwtRequest implements Serializable {
 
     private String email;
     private String password;
+    private String mobile;
 
     // Constructors
     public JwtRequest() {
     }
 
-    public JwtRequest(String username, String password) {
-        this.email = username;
-        this.password = password;
-    }
-
-    // Getters and Setters
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String username) {
-        this.email = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -34,5 +29,19 @@ public class JwtRequest implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public JwtRequest(String email, String password, String mobile) {
+        this.email = email;
+        this.password = password;
+        this.mobile = mobile;
     }
 }

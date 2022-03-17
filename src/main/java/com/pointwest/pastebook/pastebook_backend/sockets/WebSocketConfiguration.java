@@ -26,7 +26,10 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
                     @Override
                     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, @Nullable Exception ex) {
                         super.afterHandshake(request, response, wsHandler, ex);
-
+                        System.out.println("Request: " + request);
+                        System.out.println("Response: " + response);
+                        System.out.println("wsHandler:" + wsHandler);
+                        System.out.println("ex:" + ex);
                     }
 
                     @Override

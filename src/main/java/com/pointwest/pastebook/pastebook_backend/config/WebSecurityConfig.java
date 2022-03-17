@@ -88,6 +88,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/comment/{postId}").permitAll()
                 .antMatchers("/onlineconnection").permitAll()
 
+                .antMatchers("/api/notifications/short").permitAll()
+                .antMatchers("/api/notifications/all").permitAll()
 
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 

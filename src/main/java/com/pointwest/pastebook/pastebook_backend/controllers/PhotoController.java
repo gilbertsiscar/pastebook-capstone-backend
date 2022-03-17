@@ -57,7 +57,6 @@ public class PhotoController {
     }
 
     // CODES FOR THYMELEAF TESTING
-
     @GetMapping("/api/tl/test")
     public String test(Model model) {
         return "result";
