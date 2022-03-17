@@ -16,6 +16,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -92,7 +93,8 @@ public class AuthController {
     User userDb = userService.getUserById(userId);
     authenticate(userDb.getEmail(), userDto.getCurrentPassword());
     User user = new User();
-    user.setPassword(userDto.getNewPassword());
+    String encodedPassword = new BCryptPasswordEncoder().encode(userDto.getNewPassword());
+    user.setPassword(encodedPassword);
     return ResponseEntity.ok().body(userService.updateSecurityPassword(user, userId));
   }
 
@@ -105,7 +107,7 @@ public class AuthController {
     } catch (BadCredentialsException e) {
       throw new Exception("INVALID_CREDENTIALS", e);
     } catch (Exception e) {
-      System.out.println(e);
+      System.out.println(e.getMessage());
     }
   }
 }
