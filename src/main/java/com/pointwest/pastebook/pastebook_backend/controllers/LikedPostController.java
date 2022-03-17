@@ -1,5 +1,6 @@
 package com.pointwest.pastebook.pastebook_backend.controllers;
 
+import com.pointwest.pastebook.pastebook_backend.models.LikedPost;
 import com.pointwest.pastebook.pastebook_backend.services.LikedPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,9 @@ public class LikedPostController {
     @Autowired private LikedPostService likedPostService;
 
     @PostMapping("/like/{postId}")
-    public ResponseEntity<Object> likePost(
+    public ResponseEntity<LikedPost> likePost(
             @PathVariable Long postId, @RequestHeader(value = "Authorization") String stringToken) {
-        likedPostService.likePost(postId, stringToken);
-        return ResponseEntity.ok().body(true);
+        return ResponseEntity.ok().body(likedPostService.likePost(postId, stringToken));
     }
 
     @RequestMapping(value = "/like/{postId}", method = RequestMethod.DELETE)

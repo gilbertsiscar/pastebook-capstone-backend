@@ -30,7 +30,7 @@ public class LikedPostImpl implements LikedPostService {
     private JwtToken jwtToken;
 
     @Override
-    public void likePost(Long postId, String token) {
+    public LikedPost likePost(Long postId, String token) {
         Optional<Post> postToLike = postRepository.findById(postId);
         Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
         User user = userRepository.findById(authenticatedId).get();
@@ -41,7 +41,9 @@ public class LikedPostImpl implements LikedPostService {
             commenceLike.setUser(user);
             postToLike.get().getLikes().add(commenceLike);
             postRepository.save(postToLike.get());
-            likedPostRepository.save(commenceLike);
+            return likedPostRepository.save(commenceLike);
+        } else {
+            throw new RuntimeException("error");
         }
     }
 
