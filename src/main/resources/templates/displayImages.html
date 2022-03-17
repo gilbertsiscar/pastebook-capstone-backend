@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <p>Images</p>
+
+    <table>
+        <thead>
+        <tr>
+            <td>
+                <!-- Looping through every album in an albumArr -->
+                <div th:each="instance : ${photoArrStr}">
+                    <span>
+                        <img alt="testing" th:src="@{${instance}}" />
+                    </span>
+                </div>
+            </td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
