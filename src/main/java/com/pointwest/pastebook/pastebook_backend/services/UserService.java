@@ -9,10 +9,12 @@ public interface UserService {
     User createUser(User user);
 
     User getUserById(Long id);
-    // update user
-    User updateUserCredentials(User user, Long id);
 
-    User updateUserPersonalDetails(User user, Long id, String token);
+    User updateSecurityEmail(User user, Long id);
+
+    User updateSecurityPassword(User user, Long id);
+
+    User updatePersonalDetails(User user, Long id);
 
     ResponseEntity updateAboutMe(String aboutMe, Long id, String token);
 
