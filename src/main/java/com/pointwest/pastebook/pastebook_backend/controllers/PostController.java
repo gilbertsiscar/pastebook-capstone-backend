@@ -2,9 +2,10 @@ package com.pointwest.pastebook.pastebook_backend.controllers;
 
 import com.pointwest.pastebook.pastebook_backend.models.Image;
 import com.pointwest.pastebook.pastebook_backend.models.Post;
+import com.pointwest.pastebook.pastebook_backend.models.dto.PostDto;
 import com.pointwest.pastebook.pastebook_backend.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -22,27 +23,53 @@ public class PostController {
   @Autowired private PostService postService;
 
   // POST /api/posts
-  @PostMapping
+//  @PostMapping
+//  public ResponseEntity<Post> createPost(
+//      @RequestParam(value = "image", required = false) MultipartFile imageFile,
+//      @RequestParam(value = "content", required = false) String content,
+//      @RequestParam(value = "id", required = false) Long id,
+//      @RequestHeader(value = "Authorization") String stringToken)
+//      throws IOException {
+//    Post post = new Post();
+//    if (imageFile != null) {
+//      Image image =
+//          new Image(
+//              StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename())),
+//              imageFile.getContentType(),
+//              imageFile.getBytes());
+//      post.setImage(image);
+//    }
+//
+//    if (content != null) {
+//      post.setContent(StringUtils.cleanPath(content));
+//    }
+//
+//    return ResponseEntity.ok().body(postService.createPost(post, stringToken ));
+//  }
+
+  @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
   public ResponseEntity<Post> createPost(
-      @RequestParam(value = "image", required = false) MultipartFile imageFile,
-      @RequestParam(value = "content", required = false) String content,
-      @RequestHeader(value = "Authorization") String stringToken)
-      throws IOException {
+      @RequestPart(value = "post", required = false) PostDto postDto,
+      @RequestPart(value = "image", required = false) MultipartFile imageFile,
+      @RequestHeader("Authorization") String token
+      ) throws IOException {
     Post post = new Post();
+    post.setContent(postDto.getContent());
+
     if (imageFile != null) {
       Image image =
-          new Image(
-              StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename())),
-              imageFile.getContentType(),
-              imageFile.getBytes());
+              new Image(
+                      StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename())),
+                      imageFile.getContentType(),
+                      imageFile.getBytes());
       post.setImage(image);
     }
 
-    if (content != null) {
-      post.setContent(StringUtils.cleanPath(content));
+    if(post.getTags() != null) {
+      return ResponseEntity.ok().body(postService.createPost(post, token, postDto.getTagged()));
     }
 
-    return ResponseEntity.ok().body(postService.createPost(post, stringToken));
+    return ResponseEntity.ok().body(postService.createPost(post, token));
   }
 
   // GET /api/posts/{id}
