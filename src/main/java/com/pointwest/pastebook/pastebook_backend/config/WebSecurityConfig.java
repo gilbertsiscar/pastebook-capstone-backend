@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -62,6 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/users/aboutme/{userId}").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/users").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/users/search/{searchTerm}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/posts").permitAll()
                 .antMatchers("/api/like/{postId}").permitAll()
                 .antMatchers("/api/comment/{postId}").permitAll()
@@ -75,7 +77,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/api/friends/{requesterId}/{recipientId}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/friends/{pageId}").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/friends/{requesterId}/{recipientId}").permitAll()
-
+                .antMatchers(HttpMethod.POST, "/api/albums").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/albums/{albumId}").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/api/albums/{albumId}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/albums/{userId}").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/tl/photos").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/tl/display/albums").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/posts").permitAll()
                 .antMatchers("/api/like/{postId}").permitAll()
                 .antMatchers("/api/comment/{postId}").permitAll()
@@ -92,5 +99,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
+    }
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/user-photos/**");
     }
 }

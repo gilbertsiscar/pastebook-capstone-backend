@@ -2,6 +2,7 @@ package com.pointwest.pastebook.pastebook_backend.services;
 
 import com.pointwest.pastebook.pastebook_backend.config.JwtToken;
 import com.pointwest.pastebook.pastebook_backend.exceptions.EntityDuplicateException;
+import com.pointwest.pastebook.pastebook_backend.exceptions.EntityNotFoundException;
 import com.pointwest.pastebook.pastebook_backend.models.User;
 import com.pointwest.pastebook.pastebook_backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private JwtToken jwtToken;
 
+    @Override
     public User createUser(User user) {
         Optional<User> userDb = Optional.ofNullable(userRepository.findByEmail(user.getEmail()));
         if (userDb.isPresent()) {
@@ -36,50 +38,30 @@ public class UserServiceImpl implements UserService {
     }
 
     private User prodVerify(User user) {
+        Long id = userRepository.save(user).getId();
         user.setEnabled(true);
-        user.setProfileUrl(user.getFirstName() + user.getLastName() + user.getId());
-        return user;
+        user.setProfileUrl(user.getFirstName() + user.getLastName() + id);
+        return userRepository.save(user);
     }
 
-//    @Override
-//    public ResponseEntity updateUserCredentials(User user, Long id, String token) {
-//        User userForUpdating = userRepository.findById(id).get();
-//
-//        if (userForUpdating != null) {
-//            String authenticatedEmail = jwtToken.getUsernameFromToken(token);
-//            if (authenticatedEmail.equalsIgnoreCase(userForUpdating.getEmail())) {
-//                // Add email checker if unique
-//                userForUpdating.setEmail(user.getEmail());
-//                userForUpdating.setPassword(user.getPassword());
-//                userRepository.save(userForUpdating);
-//                return new ResponseEntity("User details updated successfully", HttpStatus.OK);
-//            } else {
-//                return new ResponseEntity("You are not authorized to edit this profile", HttpStatus.UNAUTHORIZED);
-//            }
-//        } else {
-//            return new ResponseEntity("Profile not found", HttpStatus.NOT_FOUND);
-//        }
+    @Override
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class, id));
+    }
+
+//    private User prodVerify(User user) {
+//        user.setEnabled(true);
+//        user.setProfileUrl(user.getFirstName() + user.getLastName() + user.getId());
+//        return user;
 //    }
-//
 
     @Override
-    public ResponseEntity updateUserCredentials(User user, Long id, String token) {
-        User userForUpdating = userRepository.findById(id).get();
-
-        if (userForUpdating != null) {
-            String authenticatedEmail = jwtToken.getUsernameFromToken(token);
-            if (authenticatedEmail.equalsIgnoreCase(userForUpdating.getEmail())) {
-                // Add email checker if unique
-                userForUpdating.setEmail(user.getEmail());
-                userForUpdating.setPassword(user.getPassword());
-                userRepository.save(userForUpdating);
-                return new ResponseEntity("User details updated successfully", HttpStatus.OK);
-            } else {
-                return new ResponseEntity("You are not authorized to edit this profile", HttpStatus.UNAUTHORIZED);
-            }
-        } else {
-            return new ResponseEntity("Profile not found", HttpStatus.NOT_FOUND);
-        }
+    public User updateUserCredentials(User user, Long id) {
+        User userDb = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class, id));
+        userDb.setEmail(user.getEmail());
+        userDb.setMobileNumber(user.getMobileNumber());
+        userDb.setPassword(user.getPassword());
+        return userRepository.save(userDb);
     }
 
     // get users
@@ -89,45 +71,8 @@ public class UserServiceImpl implements UserService {
 
     // get user
     public User getUser(Long id, String token) {
-        // check if you own this account
         return userRepository.findById(id).get();
-        // check if its your friend
-
-        // deny
-
-
     }
-
-//    @Override
-//    public ResponseEntity getProfile(String profileUrl, String token) {
-//        //token checker
-//        User user= userRepository.getUserProfileByUrl(profileUrl);
-//        if(user != null)
-//            return new ResponseEntity(user, HttpStatus.OK);
-//        else
-//            return new ResponseEntity("User not found!", HttpStatus.NOT_FOUND);
-//    }
-//
-//
-//    @Override
-//    public ResponseEntity updateUserPersonalDetails(User user, Long id, String token) {
-//        User userForUpdating = userRepository.findById(id).get();
-//
-//        String authenticatedEmail = jwtToken.getUsernameFromToken(token);
-//        if(authenticatedEmail.equalsIgnoreCase(userForUpdating.getEmail()))
-//        {
-//            userForUpdating.setFirstName(user.getFirstName());
-//            userForUpdating.setLastName(user.getLastName());
-//            userForUpdating.setGender(user.getGender());
-//            userForUpdating.setBirthday(user.getBirthday());
-//            userRepository.save(userForUpdating);
-//
-//            return new ResponseEntity("User details updated successfully", HttpStatus.OK);
-//        }else {
-//            return new ResponseEntity("You are not authorized to edit this profile", HttpStatus.UNAUTHORIZED);
-//        }
-//    }
-
 
     @Override
     public ResponseEntity getProfile(String profileUrl, String token) {
@@ -141,20 +86,19 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public ResponseEntity updateUserPersonalDetails(User user, Long id, String token) {
-        User userForUpdating = userRepository.findById(id).get();
+    public User updateUserPersonalDetails(User user, Long id, String token) {
+        User userDb = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class, id));
 
         String authenticatedEmail = jwtToken.getUsernameFromToken(token);
-        if (authenticatedEmail.equalsIgnoreCase(userForUpdating.getEmail())) {
-            userForUpdating.setFirstName(user.getFirstName());
-            userForUpdating.setLastName(user.getLastName());
-            userForUpdating.setGender(user.getGender());
-            userForUpdating.setBirthday(user.getBirthday());
-            userRepository.save(userForUpdating);
-
-            return new ResponseEntity("User details updated successfully", HttpStatus.OK);
+        if (authenticatedEmail.equalsIgnoreCase(userDb.getEmail())) {
+            userDb.setFirstName(user.getFirstName());
+            userDb.setLastName(user.getLastName());
+            userDb.setGender(user.getGender());
+            userDb.setBirthday(user.getBirthday());
+            userDb.setProfileUrl(user.getFirstName()+user.getLastName() + id);
+            return userRepository.save(userDb);
         } else {
-            return new ResponseEntity("You are not authorized to edit this profile", HttpStatus.UNAUTHORIZED);
+            throw  new RuntimeException("Unauthorized access");
         }
     }
 
@@ -178,7 +122,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // search user
-    public ResponseEntity searchUser(String searchTerm, String token) {
+    public ResponseEntity searchUser(String searchTerm) {
         ArrayList<User> searchedUsers = new ArrayList<>();
         ArrayList<String> searchedUsersUrl = new ArrayList<>();
         ArrayList<User> searchedUsersAlphabetical = new ArrayList<>();

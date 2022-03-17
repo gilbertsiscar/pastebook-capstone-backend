@@ -8,10 +8,11 @@ import java.util.Optional;
 public interface UserService {
     User createUser(User user);
 
+    User getUserById(Long id);
     // update user
-    ResponseEntity updateUserCredentials(User user, Long id, String token);
+    User updateUserCredentials(User user, Long id);
 
-    ResponseEntity updateUserPersonalDetails(User user, Long id, String token);
+    User updateUserPersonalDetails(User user, Long id, String token);
 
     ResponseEntity updateAboutMe(String aboutMe, Long id, String token);
 
@@ -21,7 +22,7 @@ public interface UserService {
     ResponseEntity getProfile(String profileUrl, String token);
 
     // search user
-    ResponseEntity searchUser(String searchTerm, String token);
+    ResponseEntity searchUser(String searchTerm);
 
     Optional<User> findByEmail(String email);
     Optional<User> findByMobile(String mobile);

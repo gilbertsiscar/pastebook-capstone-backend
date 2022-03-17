@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Object> {
+public interface UserRepository extends JpaRepository<User, Object> {
     @Query(value = "SELECT * FROM user WHERE profile_url = ?1",
             nativeQuery = true)
     User getUserProfileByUrl(String profileUrl);
@@ -22,4 +22,3 @@ public interface UserRepository extends CrudRepository<User, Object> {
 
 
 }
-
