@@ -21,7 +21,7 @@ public class Album {
     @Column
     private String datetimeCreated;
 
-    @OneToMany(mappedBy = "album")
+    @OneToMany(mappedBy = "album", cascade = CascadeType.REMOVE)
     @JsonIgnore
     private Set<Photo> photos;
 

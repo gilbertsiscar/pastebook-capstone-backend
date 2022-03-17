@@ -19,7 +19,7 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping(value = "/api")
 public class UserController {
-
+  
   @Autowired private UserService userService;
 
   @RequestMapping(value = "/test", method = RequestMethod.GET)
@@ -107,20 +107,7 @@ public class UserController {
 
     return userService.updateAboutMe(body.get("aboutme"), userId, stringToken);
   }
-
-  // Not needed
-  // get users
-  //    @RequestMapping(value="/users", method = RequestMethod.GET)
-  //    public ResponseEntity<Object> getUsers() {
-  //        return userService.getUsers();
-  //    }
-  //
-  //    // get user
-  //    @RequestMapping(value="/users/{userid}", method = RequestMethod.GET)
-  //    public ResponseEntity<Object> getUser(@PathVariable Long userid) {
-  //        return userService.getUser(userid);
-  //    }
-
+  
   // FOR TESTING CODES
   // get users
   @RequestMapping(value = "/users/test", method = RequestMethod.GET)
