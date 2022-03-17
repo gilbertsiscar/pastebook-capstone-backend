@@ -1,6 +1,14 @@
 package com.pointwest.pastebook.pastebook_backend.sockets;
 
 import com.google.gson.Gson;
+import com.pointwest.pastebook.pastebook_backend.repositories.FriendRepository;
+import com.pointwest.pastebook.pastebook_backend.services.FriendService;
+import com.pointwest.pastebook.pastebook_backend.services.UserService;
+import com.pointwest.pastebook.pastebook_backend.services.UserServiceImpl;
+import org.apache.coyote.Response;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
@@ -14,95 +22,57 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 @Component
+@Configurable
 public class SocketHandler extends TextWebSocketHandler {
     List<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
     Map<String, WebSocketSession> id_sessions = new HashMap<>();
     int messagecount = 0;
 
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private FriendRepository friendRepository;
+
+    //UserServiceImpl userService = new UserServiceImpl();
+
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message)
             throws InterruptedException, IOException {
 
-        // parse message
-        //Map<String, String> value = new Gson().fromJson(message.getPayload(), Map.class);
-
-        //send message to all sessions
-//         for (WebSocketSession webSocketSession : sessions) {
-//             //Map value = new Gson().fromJson(message.getPayload(), Map.class);
-//             webSocketSession.sendMessage(new TextMessage(message.getPayload()));
-//             //webSocketSession.sendMessage(new TextMessage("Request:Update"));
-//         }
-
-        System.out.println("Message from client");
+//        System.out.println("Message from client");
         Map value = new Gson().fromJson(message.getPayload(), Map.class);
-        System.out.println(value.get("user_id"));
-        System.out.println(value.get("trigger"));
-        if(value.get("user_id") != null){
-            id_sessions.put(message.getPayload(),session);
+
+        if(value.get("trigger") == null){
+            id_sessions.put((String) value.get("user_id"),session);
+            System.out.println("user id " + value.get("user_id") + " has connected");
+            userService.setOnlineStatus(Long.parseLong((String) value.get("user_id")));
         }else{
-            //save database then trigger notif
-
-            for (Map.Entry<String, WebSocketSession> sendRequest : id_sessions.entrySet()) {
-                //Map value = new Gson().fromJson(message.getPayload(), Map.class);
-                //webSocketSession.sendMessage(new TextMessage(message.getPayload()));
-
-                sendRequest.getValue().sendMessage(new TextMessage(message.getPayload()));
-            }
-
+            //Not needed anymore
+            // Error handler
         }
-        //id_sessions.put(message.getPayload(),session);
 
-
-
-//        if(value.keySet().contains("subscribe")) {
-//            // start the service with the subscribe name
-//        } else if(value.keySet().contains("unsubscribe")) {
-//            // stop the service with the unsubscribe name or remove the session that unsubscribed
-//            // be careful not to stop the service if there are still sessions available
-//        } else {
-//            // do something with the sent object
-//
-//            messagecount++;
-//            // create object myMessageNumberObject = {type: 'messageNumber', messagecount: messagecount}
-//            // session.sendMessage(new TextMessage(myMessageNumberObject))
-//
-//            // emit message with type='message'
-//            System.out.println(message.getPayload());
-//            //{"name":"test","message":"test messaage","type":"message"}
-//            session.sendMessage(new TextMessage(message.getPayload()));
-//        }
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        // the messages will be broadcasted to all users.
-        //System.out.println("Connection Establised");
-        //System.out.println(session);
-        //System.out.println(session.getId());
-        System.out.println(session.getId());
-        System.out.println(session.getAttributes());
         if(!sessions.contains(session)){
             sessions.add(session);
         }
 
-
-        System.out.println(sessions.size());
+       // System.out.println("Active sessions: "+ sessions.size());
     }
-    public void notifyUsers() throws IOException {
-        System.out.println("Connections: " + id_sessions.size() );
-        for (Map.Entry<String, WebSocketSession> sendRequest : id_sessions.entrySet()) {
-            //Map value = new Gson().fromJson(message.getPayload(), Map.class);
-            //webSocketSession.sendMessage(new TextMessage(message.getPayload()));
 
-            sendRequest.getValue().sendMessage(new TextMessage(
-                    (CharSequence) new Gson().fromJson("{'test':'pop'}}", Map.class)));
-            System.out.println("I was called");
-        }
-    }
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         // do something on connection closed
         sessions.remove(session);
+        String id = getIdFromConnections(session);
+        System.out.println(id);
+        if(id!=null){
+            userService.setOfflineStatus(Long.parseLong(id));
+           // System.out.println("user id " + id + " has disconnected");
+        }
+
     }
 
     @Override
@@ -114,4 +84,46 @@ public class SocketHandler extends TextWebSocketHandler {
     public void handleTransportError(WebSocketSession session, Throwable exception) {
         // hanedle transport error
     }
+
+
+    public void notifyMyFriends(Long userId) throws IOException {
+        //System.out.println("Connections: " + id_sessions.size() );
+        List<Long> userIds = friendRepository.friendsIds(userId);
+        for (Long friendsId:userIds) {
+            for (Map.Entry<String, WebSocketSession> sendRequest : id_sessions.entrySet()) {
+                if(sendRequest.getKey()== friendsId.toString())
+                    sendRequest.getValue().sendMessage(new TextMessage("{\"Message\":\"You got notification\"}"));
+            }
+        }
+
+    }
+
+    public void notifyUser(Long userId) throws IOException {
+        //System.out.println("User id to notify: " +userId);
+        //System.out.println("Connections: " + id_sessions.size() );
+        for (Map.Entry<String, WebSocketSession> sendRequest : id_sessions.entrySet()) {
+            //System.out.println(sendRequest.getKey());
+            if(sendRequest.getKey().equals(userId.toString()) ) {
+                //System.out.println("Found user, notifying now");
+                sendRequest.getValue().sendMessage(new TextMessage("{\"Message\":\"You got notification\"}"));
+                break;
+            }
+        }
+    }
+
+
+    public String getIdFromConnections(WebSocketSession session){
+        for (Map.Entry<String, WebSocketSession> users : id_sessions.entrySet()) {
+            System.out.println(users.getValue().getId());
+            if(users.getValue().getId() == session.getId()) {
+                //userService.setOfflineStatus(Long.parseLong(users.getValue().getId()));
+                //return users.getValue().getId();
+                return users.getKey();
+            }
+        }
+        return null;
+    }
+
+
+
 }

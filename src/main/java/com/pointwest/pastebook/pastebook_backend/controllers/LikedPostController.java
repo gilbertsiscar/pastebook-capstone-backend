@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @CrossOrigin
 @RequestMapping(value = "/api")
@@ -13,7 +15,7 @@ public class LikedPostController {
 
     @PostMapping("/like/{postId}")
     public ResponseEntity<Object> likePost(
-            @PathVariable Long postId, @RequestHeader(value = "Authorization") String stringToken) {
+            @PathVariable Long postId, @RequestHeader(value = "Authorization") String stringToken) throws IOException {
         likedPostService.likePost(postId, stringToken);
         return ResponseEntity.ok().body(true);
     }
