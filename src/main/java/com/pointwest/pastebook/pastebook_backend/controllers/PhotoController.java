@@ -8,12 +8,14 @@ import com.pointwest.pastebook.pastebook_backend.repositories.PhotoRepository;
 import com.pointwest.pastebook.pastebook_backend.services.PhotoService;
 import com.pointwest.pastebook.pastebook_backend.utils.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -91,6 +93,7 @@ public class PhotoController {
         FileUploadUtil.saveFile(uploadDir, newPhoto.getId() + fileName, multipartFile);
         // we're going to create a FileUploadUtil class
 
+//        return new ResponseEntity("Photo uploaded successfully", HttpStatus.OK);
         return "result";
     }
 
