@@ -1,5 +1,6 @@
 package com.pointwest.pastebook.pastebook_backend.services;
 
+import com.pointwest.pastebook.pastebook_backend.models.LikedPost;
 import com.pointwest.pastebook.pastebook_backend.models.Post;
 import com.pointwest.pastebook.pastebook_backend.models.User;
 import org.springframework.http.ResponseEntity;
@@ -7,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface LikedPostService {
-    void likePost(Long postId, String token);
+    LikedPost likePost(Long postId, String token);
 
     Integer getLikes(Long postId);
 
