@@ -3,8 +3,10 @@ package com.pointwest.pastebook.pastebook_backend.services;
 import com.pointwest.pastebook.pastebook_backend.config.JwtToken;
 import com.pointwest.pastebook.pastebook_backend.exceptions.EntityNotFoundException;
 import com.pointwest.pastebook.pastebook_backend.models.Post;
+import com.pointwest.pastebook.pastebook_backend.models.Tag;
 import com.pointwest.pastebook.pastebook_backend.models.User;
 import com.pointwest.pastebook.pastebook_backend.repositories.PostRepository;
+import com.pointwest.pastebook.pastebook_backend.repositories.TagRepository;
 import com.pointwest.pastebook.pastebook_backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 import javax.swing.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,6 +27,8 @@ public class PostServiceImpl implements PostService {
   @Autowired private PostRepository postRepository;
 
   @Autowired private UserRepository userRepository;
+
+  @Autowired private TagRepository tagRepository;
 
   @Autowired private JwtToken jwtToken;
 
@@ -38,7 +44,39 @@ public class PostServiceImpl implements PostService {
             .findById(authenticatedId)
             .orElseThrow(() -> new EntityNotFoundException(User.class, authenticatedId));
 
+//    User userTobeTagged = userRepository.findById(id).get();
+//    Tag tag = new Tag();
+//    tag.setPost(post);
+//    tag.setUser(userTobeTagged);
     post.setUser(user);
+//    post.getTags().add(tag);
+    return postRepository.save(post);
+  }
+
+  @Override
+  public Post createPost(Post post, String token, List<Long> id) {
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    LocalDateTime now = LocalDateTime.now();
+    post.setDatetimeCreated(dtf.format(now));
+
+    Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
+    User user =
+            userRepository
+                    .findById(authenticatedId)
+                    .orElseThrow(() -> new EntityNotFoundException(User.class, authenticatedId));
+
+    List<Tag> tags = new ArrayList<>();
+
+    for(Long i: id) {
+      User userDb = userRepository.findById(i).get();
+      Tag tag = new Tag();
+      tag.setUser(userDb);
+      tag.setPost(post);
+      tags.add(tag);
+    }
+    post.setUser(user);
+    post.setTags(tags);
+
     return postRepository.save(post);
   }
 
