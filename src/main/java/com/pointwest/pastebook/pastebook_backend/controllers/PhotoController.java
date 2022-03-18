@@ -81,20 +81,28 @@ public class PhotoController {
         photoRepository.save(newPhoto);
 
         // for cleaning the file name
-        String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        newPhoto.setPhotoFileName(newPhoto.getId() + fileName); //add photoFileName property in the Photo model
+        String initFileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
 
-        photoRepository.save(newPhoto); // -> at this point, may record na lalabas sa database!
+       if (!initFileName.equals("")) {
+           // for removing all whitespaces in the file name
+           String fileName = initFileName.replaceAll("\\s+","");
 
-        // codes below are for uploading the files in the file system (which will be exposed later on)
-        String uploadDir = "./user-photos/" + newPhoto.getAlbum().getUser().getId() + "/" + newPhoto.getAlbum().getId();
+           newPhoto.setPhotoFileName(newPhoto.getId() + fileName); //add photoFileName property in the Photo model
 
-        // IMPORTANT NOTE: added the ' + newPhoto.getId() ' to somehow create a unique image after every upload
-        FileUploadUtil.saveFile(uploadDir, newPhoto.getId() + fileName, multipartFile);
-        // we're going to create a FileUploadUtil class
+           photoRepository.save(newPhoto); // -> at this point, may record na lalabas sa database!
+
+           // codes below are for uploading the files in the file system (which will be exposed later on)
+           String uploadDir = "./user-photos/" + newPhoto.getAlbum().getUser().getId() + "/" + newPhoto.getAlbum().getId();
+
+           // IMPORTANT NOTE: added the ' + newPhoto.getId() ' to somehow create a unique image after every upload
+           FileUploadUtil.saveFile(uploadDir, newPhoto.getId() + fileName, multipartFile);
+           // we're going to create a FileUploadUtil class
 
 //        return new ResponseEntity("Photo uploaded successfully", HttpStatus.OK);
-        return "result";
+           return "result";
+       } else {
+           return "badresult";
+       }
     }
 
     // form/page for asking the user for an albumId input, where upon clicking the submit button, the user is directed to the list of images pertaining to the albumId inputted
@@ -117,7 +125,7 @@ public class PhotoController {
 
         // loop through every photo with album_id = albumId from the @RequestParam
         for (Photo photo : photoRepository.findAll()) {
-            if (photo.getAlbum().getId() == albumId) {
+            if (photo.getAlbum().getId() == albumId && photo.getPhotoFileName() != null) {
                 photoArrStr.add("/user-photos/" + photo.getAlbum().getUser().getId() + "/" + photo.getAlbum().getId() + "/" + photo.getPhotoFileName());
             }
         }
