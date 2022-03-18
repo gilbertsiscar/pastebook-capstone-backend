@@ -1,12 +1,11 @@
 package com.pointwest.pastebook.pastebook_backend.models;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -60,14 +59,33 @@ public class User {
 
     private boolean enabled;
 
-//    public Set<Post> getTaggedpost() {
-//        return taggedpost;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Tag> tags = new ArrayList<>();
+
+//    public List<Tag> getTags() {
+//      return tags;
 //    }
 //
-//    public void setTaggedpost(Set<Post> taggedpost) {
-//        this.taggedpost = taggedpost;
+//    public void setTags(List<Tag> tags) {
+//      this.tags = tags;
 //    }
 
+
+  //    @ManyToMany(mappedBy = "tagged")
+//    @JsonIgnore
+//    private Set<Post> tagged = new HashSet<>();
+//
+//
+//    public Set<Post> getTagged() {
+//        return tagged;
+//    }
+//
+//    public void setTagged(Set<Post> tagged) {
+//        this.tagged = tagged;
+//    }
+//
     @Column
     private String profileUrl;
 
@@ -104,9 +122,6 @@ public class User {
 //    @JoinColumn(name="post_id", nullable=false)
 //    private Post post;
 
-//    @ManyToMany(mappedBy = "taggedUsers")
-//    @JsonIgnore
-//    private Set<Post> taggedpost = new HashSet<>();
 
     // OneToMany relationship between User Model and Album Model
     @OneToMany(mappedBy = "user")

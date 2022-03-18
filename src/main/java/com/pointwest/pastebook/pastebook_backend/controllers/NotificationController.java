@@ -23,6 +23,20 @@ public class NotificationController {
     JwtToken jwtToken;
 
     // accepting friend
+    @RequestMapping(value="/api/notifications/seen", method = RequestMethod.POST)
+    public ResponseEntity seenNotifications(
+            @RequestHeader (value = "Authorization") String stringToken,
+            @RequestBody Notification[] notifications
+    ) {
+        if(!stringToken.equals(null)) {
+            String user_Id = jwtToken.getIdFromToken(stringToken);
+            return notificationService.seenNotifications(notifications);
+            //return notificationService.get5Notifications(Long.parseLong(user_Id));
+        }
+        //return friendService.acceptFriend(friendMap);
+        return null;
+    }
+
     @RequestMapping(value="/api/notifications/short", method = RequestMethod.GET)
     public List<NotifCardRequest> get5LatestNotifications(
             @RequestHeader (value = "Authorization") String stringToken
@@ -36,13 +50,13 @@ public class NotificationController {
     }
 
     @RequestMapping(value="/api/notifications/all", method = RequestMethod.GET)
-    public ResponseEntity<Object> getAllMyNotifications(@RequestHeader (value = "Authorization") String stringToken) {
+    public List<NotifCardRequest> getAllMyNotifications(@RequestHeader (value = "Authorization") String stringToken) {
 
         if(!stringToken.equals(null)) {
             String user_Id = jwtToken.getIdFromToken(stringToken);
             return notificationService.getAllMyNotification(Long.parseLong(user_Id));
         }
         //return friendService.acceptFriend(friendMap);
-        return new ResponseEntity<>("Error", HttpStatus.UNAUTHORIZED);
+        return null;
     }
 }

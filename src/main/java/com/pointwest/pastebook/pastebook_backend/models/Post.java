@@ -30,10 +30,21 @@ public class Post {
   @OneToMany(mappedBy = "post")
   private List<LikedPost> likes = new ArrayList<>();
 
+  @OneToMany(mappedBy = "post", cascade = CascadeType.PERSIST)
+  private List<Tag> tags = new ArrayList<>();
+
   public Post() {}
 
   public Post(String content) {
     this.content = content;
+  }
+
+  public List<Tag> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<Tag> tags) {
+    this.tags = tags;
   }
 
   public Image getImage() {

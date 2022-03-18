@@ -17,10 +17,10 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -49,18 +49,31 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class, id));
     }
 
-//    private User prodVerify(User user) {
-//        user.setEnabled(true);
-//        user.setProfileUrl(user.getFirstName() + user.getLastName() + user.getId());
-//        return user;
-//    }
-
     @Override
-    public User updateUserCredentials(User user, Long id) {
+    public User updateSecurityEmail(User user, Long id) {
         User userDb = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class, id));
         userDb.setEmail(user.getEmail());
-        userDb.setMobileNumber(user.getMobileNumber());
+        return userRepository.save(userDb);
+    }
+
+    @Override
+    public User updateSecurityPassword(User user, Long id) {
+        User userDb = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class, id));
         userDb.setPassword(user.getPassword());
+        return userRepository.save(userDb);
+    }
+
+    @Override
+    public User updatePersonalDetails(User user, Long id) {
+        User userDb = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class, id));
+        userDb.setFirstName(user.getFirstName());
+        userDb.setLastName(user.getLastName());
+        userDb.setBirthday(user.getBirthday());
+        userDb.setGender(user.getGender());
+        userDb.setMobileNumber(user.getMobileNumber());
+
+        String profileUrl = user.getFirstName() + user.getLastName() + id;
+        userDb.setProfileUrl(profileUrl);
         return userRepository.save(userDb);
     }
 
@@ -85,23 +98,23 @@ public class UserServiceImpl implements UserService {
     }
 
 
-    @Override
-    public User updateUserPersonalDetails(User user, Long id, String token) {
-        User userDb = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class, id));
-
-        String authenticatedEmail = jwtToken.getUsernameFromToken(token);
-        if (authenticatedEmail.equalsIgnoreCase(userDb.getEmail())) {
-            userDb.setFirstName(user.getFirstName());
-            userDb.setLastName(user.getLastName());
-            userDb.setGender(user.getGender());
-            userDb.setBirthday(user.getBirthday());
-            userDb.setProfileUrl(user.getFirstName()+user.getLastName() + id);
-            return userRepository.save(userDb);
-        } else {
-            throw  new RuntimeException("Unauthorized access");
-        }
-    }
-
+//    @Override
+//    public User updateUserPersonalDetails(User user, Long id, String token) {
+//        User userDb = userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(User.class, id));
+//
+//        String authenticatedEmail = jwtToken.getUsernameFromToken(token);
+//        if (authenticatedEmail.equalsIgnoreCase(userDb.getEmail())) {
+//            userDb.setFirstName(user.getFirstName());
+//            userDb.setLastName(user.getLastName());
+//            userDb.setGender(user.getGender());
+//            userDb.setBirthday(user.getBirthday());
+//            userDb.setProfileUrl(user.getFirstName()+user.getLastName() + id);
+//            return userRepository.save(userDb);
+//        } else {
+//            throw  new RuntimeException("Unauthorized access");
+//        }
+//    }
+//
 
     @Override
     public ResponseEntity updateAboutMe(String aboutMe, Long id, String token) {
@@ -122,7 +135,7 @@ public class UserServiceImpl implements UserService {
     }
 
     // search user
-    public ResponseEntity searchUser(String searchTerm) {
+    public ResponseEntity searchUser(String searchTerm, String token) {
         ArrayList<User> searchedUsers = new ArrayList<>();
         ArrayList<String> searchedUsersUrl = new ArrayList<>();
         ArrayList<User> searchedUsersAlphabetical = new ArrayList<>();
@@ -186,6 +199,7 @@ public class UserServiceImpl implements UserService {
         user.setOnline(false);
         userRepository.save(user);
     }
+
 
     // FOR TESTING CODES
     // get users
