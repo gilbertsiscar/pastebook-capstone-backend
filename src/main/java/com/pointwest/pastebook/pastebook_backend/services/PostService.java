@@ -9,7 +9,7 @@ import java.util.List;
 public interface PostService {
     Post createPost(Post post, String token);
 
-    Post createPost(Post post, String token, List<Long> id);
+    Post createPost(Post post, String token, Long id);
 
     Post getPostById(Long id);
 
