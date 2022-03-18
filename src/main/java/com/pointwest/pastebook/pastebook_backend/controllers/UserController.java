@@ -96,7 +96,7 @@ public class UserController {
   @RequestMapping(value = "/users/search/{searchTerm}", method = RequestMethod.GET)
   public ResponseEntity<Object> searchUser(
       @PathVariable String searchTerm, @RequestHeader(value = "Authorization") String stringToken) {
-    return userService.searchUser(searchTerm);
+    return userService.searchUser(searchTerm, stringToken);
   }
 
   @RequestMapping(value = "/users/aboutme/{userId}", method = RequestMethod.PUT)

@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Object> {
-    @Query(value = "SELECT * FROM user WHERE profile_url = ?1",
+    @Query(value = "SELECT * FROM users WHERE profile_url = ?1",
             nativeQuery = true)
     User getUserProfileByUrl(String profileUrl);
 
