@@ -19,7 +19,7 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping(value = "/api")
 public class UserController {
-  
+
   @Autowired private UserService userService;
 
   @RequestMapping(value = "/test", method = RequestMethod.GET)
@@ -77,19 +77,17 @@ public class UserController {
     return userService.getProfile(profileUrl, stringToken);
   }
 
-  @PutMapping("/users/details/{userId}")
-  public ResponseEntity<Object> updateUserPersonalDetails(
-      @RequestBody UserDto userDto,
-      @PathVariable Long userId,
-      @RequestHeader(value = "Authorization") String stringToken) {
+  @PutMapping("/users/{userId}")
+  public ResponseEntity<User> updateUserPersonalDetails(
+      @RequestBody UserDto userDto, @PathVariable Long userId) {
 
     User user = new User();
     user.setFirstName(userDto.getFirstName());
     user.setLastName(userDto.getLastName());
     user.setBirthday(userDto.getBirthday());
     user.setGender(userDto.getGender());
-    return ResponseEntity.ok()
-        .body(userService.updateUserPersonalDetails(user, userId, stringToken));
+    user.setMobileNumber(userDto.getMobileNumber());
+    return ResponseEntity.ok().body(userService.updatePersonalDetails(user, userId));
   }
 
   // search user
@@ -107,7 +105,7 @@ public class UserController {
 
     return userService.updateAboutMe(body.get("aboutme"), userId, stringToken);
   }
-  
+
   // FOR TESTING CODES
   // get users
   @RequestMapping(value = "/users/test", method = RequestMethod.GET)
