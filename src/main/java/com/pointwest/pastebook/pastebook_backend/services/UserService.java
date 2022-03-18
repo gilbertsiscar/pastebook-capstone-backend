@@ -6,14 +6,13 @@ import org.springframework.http.ResponseEntity;
 import java.util.Optional;
 
 public interface UserService {
+    User createUser(User user);
 
-    // create user
-    ResponseEntity createUser(User user);
-
+    User getUserById(Long id);
     // update user
-    ResponseEntity updateUserCredentials(User user, Long id, String token);
+    User updateUserCredentials(User user, Long id);
 
-    ResponseEntity updateUserPersonalDetails(User user, Long id, String token);
+    User updateUserPersonalDetails(User user, Long id, String token);
 
     ResponseEntity updateAboutMe(String aboutMe, Long id, String token);
 
@@ -26,7 +25,7 @@ public interface UserService {
     ResponseEntity searchUser(String searchTerm);
 
     Optional<User> findByEmail(String email);
-
+    Optional<User> findByMobile(String mobile);
 
     // CODES FOR TESTING
     ResponseEntity getUsersTest();
@@ -34,6 +33,8 @@ public interface UserService {
     // get user
     ResponseEntity getUserTest(Long id);
 
+    void setOnlineStatus(Long id);
+    void setOfflineStatus(Long id);
 
 
 }

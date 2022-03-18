@@ -50,6 +50,7 @@ public class FriendRequestServiceImpl implements FriendRequestService {
         for (Friend friend : friendRepository.findAll()) {
             if ((friend.getRequester().getId() == senderId && friend.getRecipient().getId() == receiverId) || friend.getRequester().getId() == receiverId && friend.getRecipient().getId() == senderId ) {
                 return new ResponseEntity("You're already friends!", HttpStatus.CONFLICT);
+
             }
         }
 
