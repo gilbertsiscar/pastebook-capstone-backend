@@ -4,6 +4,7 @@ import com.pointwest.pastebook.pastebook_backend.models.Image;
 import com.pointwest.pastebook.pastebook_backend.models.Post;
 import com.pointwest.pastebook.pastebook_backend.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -26,28 +27,27 @@ public class PostController {
       @RequestParam(value = "content", required = false) String content,
       @RequestParam(value = "tagged", required = false) List<Long> id,
       @RequestPart(value = "image", required = false) MultipartFile imageFile,
-      @RequestHeader("Authorization") String token
-      ) throws IOException {
+      @RequestHeader("Authorization") String token)
+      throws IOException {
     Post post = new Post();
     if (imageFile != null) {
       Image image =
-              new Image(
-                      StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename())),
-                      imageFile.getContentType(),
-                      imageFile.getBytes());
+          new Image(
+              StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename())),
+              imageFile.getContentType(),
+              imageFile.getBytes());
       post.setImage(image);
     }
 
-    if(content != null) {
+    if (content != null) {
       post.setContent(content);
     }
 
-    if(id != null) {
+    if (id != null) {
       return ResponseEntity.ok().body(postService.createPost(post, token, id));
-    } else  {
+    } else {
       return ResponseEntity.ok().body(postService.createPost(post, token));
     }
-
   }
 
   // GET /api/posts/{id}
@@ -67,6 +67,16 @@ public class PostController {
   @GetMapping
   public ResponseEntity<Iterable<Post>> getPosts() {
     return ResponseEntity.ok().body(postService.getAllPost());
+  }
+
+  // GET /api/posts
+  @GetMapping("/friends/{userId}")
+  public ResponseEntity<List<Post>> getPostWithFriends(
+      @PathVariable Long userId,
+      @RequestParam("page") Integer page,
+      @RequestParam("size") Integer size,
+      @RequestHeader("Authorization") String token) {
+    return ResponseEntity.ok().body(postService.getPostOfFriends(userId, page, size));
   }
 
   @GetMapping("/pagination")
