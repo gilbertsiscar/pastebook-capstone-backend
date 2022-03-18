@@ -50,13 +50,15 @@ public class PostServiceImpl implements PostService {
     //    Tag tag = new Tag();
     //    tag.setPost(post);
     //    tag.setUser(userTobeTagged);
+    user.getPosts().add(post);
+    userRepository.save(user);
     post.setUser(user);
     //    post.getTags().add(tag);
     return postRepository.save(post);
   }
 
   @Override
-  public Post createPost(Post post, String token, List<Long> id) {
+  public Post createPost(Post post, String token, Long id) {
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     LocalDateTime now = LocalDateTime.now();
     post.setDatetimeCreated(dtf.format(now));
@@ -67,17 +69,12 @@ public class PostServiceImpl implements PostService {
             .findById(authenticatedId)
             .orElseThrow(() -> new EntityNotFoundException(User.class, authenticatedId));
 
-    List<Tag> tags = new ArrayList<>();
-
-    for (Long i : id) {
-      User userDb = userRepository.findById(i).get();
-      Tag tag = new Tag();
-      tag.setUser(userDb);
-      tag.setPost(post);
-      tags.add(tag);
-    }
+    User userDb = userRepository.findById(id).get();
+    Tag tag = new Tag();
+    tag.setUser(userDb);
+    tag.setPost(post);
     post.setUser(user);
-    post.setTags(tags);
+    post.getTags().add(tag);
 
     return postRepository.save(post);
   }
@@ -126,7 +123,7 @@ public class PostServiceImpl implements PostService {
   @Override
   public Page<Post> getPostsPagination(Integer page, Integer size) {
     return postRepository.findAll(
-        PageRequest.of(page, size).withSort(Sort.by(Sort.Direction.DESC, "id")));
+        PageRequest.of(page, size).withSort(Sort.by(Sort.Direction.ASC, "id")));
   }
 
   @Override

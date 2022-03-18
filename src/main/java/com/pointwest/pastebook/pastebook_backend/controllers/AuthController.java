@@ -37,7 +37,7 @@ public class AuthController {
   @PostMapping("/login")
   public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest)
       throws Exception {
-    HashMap<String, String> response = new HashMap<>();
+    HashMap<String, Object> response = new HashMap<>();
 
     if (authenticationRequest.getMobile() != null) {
       User usermobile = userService.findByMobile(authenticationRequest.getMobile()).get();
@@ -52,18 +52,21 @@ public class AuthController {
 
     final String token = jwtToken.generateToken(userDetails);
 
-    String firstName = userService.findByEmail(userDetails.getUsername()).get().getFirstName();
-    String lastname = userService.findByEmail(userDetails.getUsername()).get().getLastName();
-    Long idNumber = userService.findByEmail(userDetails.getUsername()).get().getId();
-    String profileUrl = userService.findByEmail(userDetails.getUsername()).get().getProfileUrl();
+    User user = userService.findByEmail(userDetails.getUsername()).get();
+
+//    String firstName = userService.findByEmail(userDetails.getUsername()).get().getFirstName();
+//    String lastname = userService.findByEmail(userDetails.getUsername()).get().getLastName();
+//    Long idNumber = userService.findByEmail(userDetails.getUsername()).get().getId();
+//    String profileUrl = userService.findByEmail(userDetails.getUsername()).get().getProfileUrl();
 
     response.put("result", "successful");
-    response.put("id", jwtToken.getIdFromToken(token));
-    response.put("email", userDetails.getUsername());
-    response.put("name", firstName + " " + lastname);
+    response.put("id", user.getId());
+    response.put("email", user.getEmail());
+    response.put("name", user.getFirstName() + " " + user.getLastName());
     response.put("token", token);
-    response.put("idNumber", Long.toString(idNumber));
-    response.put("profileUrl", profileUrl);
+    response.put("idNumber", user.getId());
+    response.put("profileUrl", user.getProfileUrl());
+    response.put("profilePic", user.getImage());
 
     // return ResponseEntity.ok(new JwtResponse(token));
     return new ResponseEntity<>(response, HttpStatus.OK);
