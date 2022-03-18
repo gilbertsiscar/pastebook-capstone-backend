@@ -25,7 +25,7 @@ public class PostController {
   @PostMapping
   public ResponseEntity<Object> createPost(
       @RequestParam(value = "content", required = false) String content,
-      @RequestParam(value = "tagged", required = false) List<Long> id,
+      @RequestParam(value = "tagged", required = false) Long id,
       @RequestPart(value = "image", required = false) MultipartFile imageFile,
       @RequestHeader("Authorization") String token)
       throws IOException {
