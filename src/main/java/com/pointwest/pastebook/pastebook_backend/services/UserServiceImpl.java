@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
         }
         //When verified, change status to verify and set profileUrl
         userRepository.save(user);
+
         return userRepository.save(prodVerify(user));
     }
 
