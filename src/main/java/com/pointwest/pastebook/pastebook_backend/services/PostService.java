@@ -3,6 +3,7 @@ package com.pointwest.pastebook.pastebook_backend.services;
 import com.pointwest.pastebook.pastebook_backend.models.Post;
 import org.springframework.data.domain.Page;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 public interface PostService {
@@ -12,9 +13,11 @@ public interface PostService {
 
     Post getPostById(Long id);
 
-    Iterable<Post> getPostsFromUser(String stringToken);
+    List<Post> getPostsFromUser(String stringToken);
 
     Iterable<Post> getAllPost();
+
+    List<Post> getPostOfFriends(Long id, Integer page, Integer size);
 
     Page<Post> getPostsPagination(Integer page, Integer size);
 
