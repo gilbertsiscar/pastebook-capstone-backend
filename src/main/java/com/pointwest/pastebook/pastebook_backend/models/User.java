@@ -48,8 +48,8 @@ public class User {
     @Column
     private String datetimeCreated;
 
-    @Column
-    private String profilePic;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    private Image image;
 
     @Column
     private String aboutMe;
@@ -227,13 +227,21 @@ public class User {
         this.albums = albums;
     }
 
-    public String getProfilePic() {
-        return profilePic;
+    public Image getImage() {
+        return image;
     }
 
-    public void setProfilePic(String profilePic) {
-        this.profilePic = profilePic;
+    public void setImage(Image image) {
+        this.image = image;
     }
+
+//    public String getProfilePic() {
+//        return profilePic;
+//    }
+//
+//    public void setProfilePic(String profilePic) {
+//        this.profilePic = profilePic;
+//    }
 
     public String getAboutMe() {
         return aboutMe;

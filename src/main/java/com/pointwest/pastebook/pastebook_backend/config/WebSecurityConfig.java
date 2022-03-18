@@ -61,7 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/users/details/{userid}").permitAll()
                 .antMatchers("/users/profile/{profileUrl}").permitAll()
                 .antMatchers("/api/users/aboutme/{userId}").permitAll()
-
+                .antMatchers("/api/users/profilePicture").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/users").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/users/search/{searchTerm}").permitAll()
                 .antMatchers(HttpMethod.GET, " /api/users/profile/{userId}").permitAll()

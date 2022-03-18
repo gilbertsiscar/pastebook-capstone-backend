@@ -1,5 +1,6 @@
 package com.pointwest.pastebook.pastebook_backend.services;
 
+import com.pointwest.pastebook.pastebook_backend.models.Image;
 import com.pointwest.pastebook.pastebook_backend.models.User;
 import org.springframework.http.ResponseEntity;
 
@@ -18,6 +19,7 @@ public interface UserService {
 
     ResponseEntity updateAboutMe(String aboutMe, Long id, String token);
 
+    ResponseEntity uploadProfilePicture(Image image,String token);
 
     // For getting
     User getUser(Long id, String token);

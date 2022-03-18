@@ -3,6 +3,7 @@ package com.pointwest.pastebook.pastebook_backend.services;
 import com.pointwest.pastebook.pastebook_backend.config.JwtToken;
 import com.pointwest.pastebook.pastebook_backend.exceptions.EntityDuplicateException;
 import com.pointwest.pastebook.pastebook_backend.exceptions.EntityNotFoundException;
+import com.pointwest.pastebook.pastebook_backend.models.Image;
 import com.pointwest.pastebook.pastebook_backend.models.User;
 import com.pointwest.pastebook.pastebook_backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,6 +133,15 @@ public class UserServiceImpl implements UserService {
         } else {
             return new ResponseEntity("You are not authorized to edit this aboutMe", HttpStatus.UNAUTHORIZED);
         }
+    }
+
+    @Override
+    public ResponseEntity uploadProfilePicture(Image image, String token) {
+        //System.out.println("Upload image test");
+        User user = userRepository.getById(Long.parseLong(jwtToken.getIdFromToken(token)));
+        user.setImage(image);
+        userRepository.save(user);
+        return new ResponseEntity("Upload Success", HttpStatus.OK);
     }
 
     // search user

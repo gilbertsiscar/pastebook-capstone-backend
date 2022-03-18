@@ -26,13 +26,25 @@ public class FriendRequest {
     @JoinColumn(name = "receiver_id", referencedColumnName = "id")
     private User receiver;
 
+    public boolean isSeen() {
+        return isSeen;
+    }
+
+    public void setSeen(boolean seen) {
+        isSeen = seen;
+    }
+
+    @Column
+    private boolean isSeen = false;
+
     // Constructors
     public FriendRequest() {
     }
 
-    public FriendRequest(User sender, User receiver) {
+    public FriendRequest(User sender, User receiver, boolean isSeen) {
         this.sender = sender;
         this.receiver = receiver;
+        this.isSeen = isSeen;
     }
 
     public FriendRequest(String datetimeCreated, User sender, User receiver) {

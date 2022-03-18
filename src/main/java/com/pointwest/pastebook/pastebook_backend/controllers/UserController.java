@@ -1,5 +1,7 @@
 package com.pointwest.pastebook.pastebook_backend.controllers;
 
+import com.pointwest.pastebook.pastebook_backend.models.Image;
+import com.pointwest.pastebook.pastebook_backend.models.Post;
 import com.pointwest.pastebook.pastebook_backend.models.User;
 import com.pointwest.pastebook.pastebook_backend.models.dto.UserDto;
 import com.pointwest.pastebook.pastebook_backend.services.UserService;
@@ -7,13 +9,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @CrossOrigin
@@ -50,7 +56,7 @@ public class UserController {
 
     user.setAboutMe("");
     user.setProfileUrl("");
-    user.setProfilePic("");
+    //user.setProfilePic("");
 
     URI uri =
         URI.create(
@@ -76,6 +82,26 @@ public class UserController {
       @PathVariable String profileUrl, @RequestHeader(value = "Authorization") String stringToken) {
     return userService.getProfile(profileUrl, stringToken);
   }
+
+  @RequestMapping(value = "/users/profilePicture", method = RequestMethod.PUT)
+  public ResponseEntity<Object> uploadProfilePicture(
+          @RequestParam(value = "image", required = false) MultipartFile imageFile,
+          @RequestHeader("Authorization") String token
+  ) throws IOException {
+
+        if (imageFile != null) {
+          Image image =
+                  new Image(
+                          StringUtils.cleanPath(Objects.requireNonNull(imageFile.getOriginalFilename())),
+                          imageFile.getContentType(),
+                          imageFile.getBytes());
+        //return userService.getProfile(profileUrl, stringToken);
+          userService.uploadProfilePicture(image, token);
+      }
+
+        return null;
+  }
+
 
   @PutMapping("/users/{userId}")
   public ResponseEntity<User> updateUserPersonalDetails(
