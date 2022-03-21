@@ -40,7 +40,7 @@ public class LikedPostImpl implements LikedPostService {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     @Override
-    public LikedPost likePost(Long postId, String token) throws IOException {
+    public void likePost(Long postId, String token) throws IOException {
 
         Optional<Post> postToLike = postRepository.findById(postId);
         Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
@@ -52,9 +52,6 @@ public class LikedPostImpl implements LikedPostService {
             commenceLike.setUser(user);
             postToLike.get().getLikes().add(commenceLike);
             postRepository.save(postToLike.get());
-           // likedPostRepository.save(commenceLike);
-
-
             //Add notifications
             Notification notification = new Notification();
             notification.setPost(postToLike.get());
@@ -66,7 +63,6 @@ public class LikedPostImpl implements LikedPostService {
             notificationRepository.save(notification);
             // Notify User
             socketHandler.notifyUser(postToLike.get().getUser().getId());
-              return likedPostRepository.save(commenceLike);
         } else {
             throw new RuntimeException("error");
         }
@@ -76,16 +72,15 @@ public class LikedPostImpl implements LikedPostService {
 
     @Override
     public void unlikePost(Long postId, String token) {
-        Optional<Post> postToUnLike = postRepository.findById(postId);
-        if(postToUnLike.isPresent()){
+        Optional<Post> postDb = postRepository.findById(postId);
+        if(postDb.isPresent()){
             Long authenticatedId = Long.parseLong(jwtToken.getIdFromToken(token));
             User user = userRepository.findById(authenticatedId).get();
-
-            LikedPost unlike = likedPostRepository.getLikePostToUnlike(postToUnLike.get().getId(), user.getId());
-
-            postToUnLike.get().getLikes().remove(unlike);
-            postRepository.save(postToUnLike.get());
-            likedPostRepository.delete(unlike);
+            LikedPost likedPost = likedPostRepository.findByUser_Id(user.getId());
+//
+            postDb.get().getLikes().remove(likedPost);
+            likedPostRepository.delete(likedPost);
+            postRepository.save(postDb.get());
         }
     }
 
