@@ -52,6 +52,9 @@ public class LikedPostImpl implements LikedPostService {
             commenceLike.setUser(user);
             postToLike.get().getLikes().add(commenceLike);
             postRepository.save(postToLike.get());
+           // likedPostRepository.save(commenceLike);
+
+
             //Add notifications
             Notification notification = new Notification();
             notification.setPost(postToLike.get());
